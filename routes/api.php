@@ -28,9 +28,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResources([
-        'client-auth' => ClientController::class,
-        'admin-auth' => AdminController::class,
-        'agent-auth' => AgentController::class,
+        'client/auth' => ClientController::class,
+        'admin/auth' => AdminController::class,
+        'agent/auth' => AgentController::class,
         // 'agence' => AgenceController::class,
         'save' => SaveController::class
     ]);

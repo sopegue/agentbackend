@@ -89,7 +89,6 @@ class ClientAuthController extends Controller
             if ($agence || $user)
                 return ['status' => 'taken'];
             else return ['status' => 'free'];
-            return ['status' => 'taken'];
         } catch (\Throwable $th) {
             return ['status' => 'free'];
         }
