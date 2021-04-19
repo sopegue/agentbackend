@@ -270,6 +270,31 @@ class PropertyController extends Controller
                 if ($idag != [])
                     $results->whereIn('user_id', $idag);
                 // return $idag;
+            } else {
+                if ($search != null && $search != "") {
+                    $adresse1 = Adresse::where('adresse', 'like', '%' . $search . '%')->get();
+                    $adresse2 = Adresse::where('ville', 'like', '%' . $search . '%')->get();
+                    if (!$adresse1->isEmpty()) {
+                        foreach ($adresse1 as $key => $value) {
+                            array_push($idprop, $value->id);
+                        }
+                    }
+                    if (!$adresse2->isEmpty()) {
+                        foreach ($adresse2 as $key => $value) {
+                            array_push($idprop, $value->id);
+                        }
+                    }
+                    $ag = Agence::where('name', 'like', '%' . $search . '%')->get();
+                    if (!$ag->isEmpty()) {
+                        foreach ($ag as $key => $value) {
+                            array_push($idag, $value->user_id);
+                        }
+                    }
+                }
+                if ($idprop != [])
+                    $results->whereIn('adresse_id', $idprop);
+                if ($idag != [])
+                    $results->whereIn('user_id', $idag);
             }
 
             //
