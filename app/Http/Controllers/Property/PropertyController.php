@@ -188,7 +188,7 @@ class PropertyController extends Controller
     public function showByType(Request $request)
     {
         //
-        return new PropertyCollection(Propertie::where('type', $request->type)->get());
+        return new PropertyCollection(Propertie::where('type', $request->type)->take(6)->get());
     }
 
     /**
