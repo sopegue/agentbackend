@@ -524,8 +524,8 @@ class PropertyController extends Controller
 
             return new PropertyCollection($results->paginate());
         } catch (\Throwable $th) {
-            //return $th;
-            return ['message' => 'error, can not retrieve data'];
+            return $th;
+           // return ['message' => 'error, can not retrieve data'];
         }
     }
 
