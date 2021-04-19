@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\Agence\AgenceController;
+use App\Http\Controllers\AgentAuthController;
+use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\Property\PropertyController;
 use App\Http\Controllers\Property\SaveController;
 use App\Http\Controllers\User\AdminController;
@@ -20,25 +23,38 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::apiResources([
+        'client-auth' => ClientController::class,
+        'admin-auth' => AdminController::class,
+        'agent-auth' => AgentController::class,
+        // 'agence' => AgenceController::class,
+        'save' => SaveController::class
+    ]);
+    Route::get('saved/{prop}/{what}/{id}/{email}', [SaveController::class, 'savedManage']);
+});
+
+
 Route::apiResources([
-    'client' => ClientController::class,
-    'admin' => AdminController::class,
-    'agent' => AgentController::class,
-    'agence' => AgenceController::class,
     'property' => PropertyController::class,
-    'save' => SaveController::class
+]);
+Route::apiResources([
+    'agent' => AgentAuthController::class,
+    'client' => ClientAuthController::class,
+    'admin' => AdminAuthController::class,
 ]);
 
-Route::post('client/existence', [ClientController::class, 'isEmailFreeApi']);
-Route::post('client/role', [ClientController::class, 'checkClientRole']);
-Route::post('client/infos/update', [ClientController::class, 'updateInfosApi']);
-Route::post('client/pwd/update', [ClientController::class, 'updatePwdApi']);
-Route::post('client/pwd/existence', [ClientController::class, 'pwdExistence']);
+Route::post('client/existence', [ClientAuthController::class, 'isEmailFreeApi']);
+Route::post('client/role', [ClientAuthController::class, 'checkClientRole']);
+Route::post('client/infos/update', [ClientAuthController::class, 'updateInfosApi']);
+Route::post('client/pwd/update', [ClientAuthController::class, 'updatePwdApi']);
+Route::post('client/pwd/existence', [ClientAuthController::class, 'pwdExistence']);
 
-Route::post('agent/existence', [AgentController::class, 'isEmailFreeApi']);
+
+Route::post('agent/existence', [AgentAuthController::class, 'isEmailFreeApi']);
 
 Route::post('agence/existence', [AgenceController::class, 'isEmailFreeApi']);
 
@@ -49,5 +65,3 @@ Route::get('property/agent/{show}', [PropertyController::class, 'showOwn']);
 Route::get('property/{mark}/{as}/{id}', [PropertyController::class, 'soldOrRent']);
 Route::post('property/update', [PropertyController::class, 'updateApi']);
 Route::get('property/visit/{id}', [PropertyController::class, 'visitApi']);
-
-Route::get('saved/{prop}/{what}/{id}/{email}', [SaveController::class, 'savedManage']);
