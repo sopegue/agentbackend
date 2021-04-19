@@ -44,6 +44,7 @@ Route::post('agence/existence', [AgenceController::class, 'isEmailFreeApi']);
 
 Route::post('properties/search', [PropertyController::class, 'searchApi']);
 Route::get('properties/bytype/{type}', [PropertyController::class, 'showByType']);
+Route::get('properties/bytype/skip/{type}', [PropertyController::class, 'showByTypeSkip']);
 Route::get('property/agent/{show}', [PropertyController::class, 'showOwn']);
 Route::get('property/{mark}/{as}/{id}', [PropertyController::class, 'soldOrRent']);
 Route::post('property/update', [PropertyController::class, 'updateApi']);
