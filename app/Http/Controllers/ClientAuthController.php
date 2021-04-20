@@ -70,6 +70,33 @@ class ClientAuthController extends Controller
         }
     }
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function logoutNoToken($user_id, $token_id)
+    {
+        //
+        try {
+            $user = User::find($user_id);
+            if (Auth::check())
+                Auth::user()->currentAccessToken()->delete();
+            else $user->tokens()->where('id', $token_id)->delete();
+            // Auth::logout();
+            return [
+                'message' => 'User successfully logged out, case: mislogged',
+                'status' => 200
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'message' => 'An error occurs',
+                'status' => 500
+            ];
+        }
+    }
+
 
     /**
      * Display a listing of the resource.

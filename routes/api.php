@@ -67,6 +67,7 @@ Route::apiResources([
     'admin' => AdminAuthController::class,
 ]);
 
+Route::get('client/logout/notoken/{user_id}/{token_id}', [ClientAuthController::class, 'logoutNoToken']);
 Route::post('client/login', [ClientAuthController::class, 'login']);
 Route::post('client/existence', [ClientAuthController::class, 'isEmailFreeApi']);
 
