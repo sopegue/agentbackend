@@ -66,6 +66,7 @@ Route::apiResources([
     'admin' => AdminAuthController::class,
 ]);
 
+Route::get('client/logout', [ClientAuthController::class, 'logout']);
 Route::post('client/login', [ClientAuthController::class, 'login']);
 Route::post('client/existence', [ClientAuthController::class, 'isEmailFreeApi']);
 

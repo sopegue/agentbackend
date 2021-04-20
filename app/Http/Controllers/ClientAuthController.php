@@ -46,6 +46,30 @@ class ClientAuthController extends Controller
         }
     }
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function logout(Request $request)
+    {
+        //
+        try {
+            Auth::user()->currentAccessToken()->delete();
+            //Auth::logout();
+            return [
+                'message' => 'User successfully logged out',
+                'status' => 200
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'message' => 'An error occurs',
+                'status' => 500
+            ];
+        }
+    }
+
 
     /**
      * Display a listing of the resource.
