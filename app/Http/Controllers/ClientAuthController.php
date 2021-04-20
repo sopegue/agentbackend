@@ -57,7 +57,7 @@ class ClientAuthController extends Controller
         //
         try {
             Auth::user()->currentAccessToken()->delete();
-            //Auth::logout();
+            // Auth::logout();
             return [
                 'message' => 'User successfully logged out',
                 'status' => 200

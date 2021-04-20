@@ -49,6 +49,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // 'agence' => AgenceController::class,
         'save' => SaveController::class
     ]);
+    Route::get('client/logout', [ClientAuthController::class, 'logout']);
     Route::get('saved/{prop}/{what}/{id}/{email}', [SaveController::class, 'savedManage']);
     Route::post('client/role', [ClientAuthController::class, 'checkClientRole']);
     Route::post('client/infos/update', [ClientAuthController::class, 'updateInfosApi']);
@@ -66,7 +67,6 @@ Route::apiResources([
     'admin' => AdminAuthController::class,
 ]);
 
-Route::get('client/logout', [ClientAuthController::class, 'logout']);
 Route::post('client/login', [ClientAuthController::class, 'login']);
 Route::post('client/existence', [ClientAuthController::class, 'isEmailFreeApi']);
 
