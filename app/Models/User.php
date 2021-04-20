@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Adresse\Adresse;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Agence\Agence;
 use App\Models\Property\Propertie;
@@ -125,6 +126,10 @@ class User extends Authenticatable
     public function agence()
     {
         return $this->hasOne(Agence::class);
+    }
+    public function adresse()
+    {
+        return $this->belongsTo(Adresse::class);
     }
 
     public function properties_saved()

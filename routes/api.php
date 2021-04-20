@@ -11,6 +11,7 @@ use App\Http\Controllers\User\AgentController;
 use App\Http\Controllers\User\ClientController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,8 +24,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->get('/user/admin', function (Request $request) {
+    return Auth::user();
+});
+Route::middleware('auth:sanctum')->get('/user/client', function (Request $request) {
+    if (Auth::user()->adresse_id == null)
+        return [
+            'user' => Auth::user(),
+            'adresse' => null,
+        ];
+    return [
+        'user' => Auth::user(),
+        'adresse' => Auth::user()->adresse,
+    ];
+});
+Route::middleware('auth:sanctum')->get('/user/agent', function (Request $request) {
+    return Auth::user();
 });
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResources([
@@ -51,6 +66,7 @@ Route::apiResources([
     'admin' => AdminAuthController::class,
 ]);
 
+Route::post('client/login', [ClientAuthController::class, 'login']);
 Route::post('client/existence', [ClientAuthController::class, 'isEmailFreeApi']);
 
 
