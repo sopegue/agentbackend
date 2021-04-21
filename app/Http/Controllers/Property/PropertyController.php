@@ -270,6 +270,9 @@ class PropertyController extends Controller
                 }
                 if ($idprop != [])
                     $results->whereIn('adresse_id', $idprop);
+
+                if ($results->isEmpty())
+                    return [];
             } else if ($what == 'Agent') {
                 if ($search != null && $search != "") {
                     $ag = Agence::where('name', 'like', '%' . $search . '%')->get();
@@ -281,7 +284,8 @@ class PropertyController extends Controller
                 }
                 if ($idag != [])
                     $results->whereIn('user_id', $idag);
-                // return $idag;
+                if ($results->isEmpty())
+                    return [];
             } else {
                 if ($search != null && $search != "") {
                     $adresse1 = Adresse::where('adresse', 'like', '%' . $search . '%')->get();
@@ -305,8 +309,12 @@ class PropertyController extends Controller
                 }
                 if ($idprop != [])
                     $results->whereIn('adresse_id', $idprop);
-                if ($idag != [])
-                    $results->whereIn('user_id', $idag);
+                if ($results->isEmpty()) {
+                    if ($idag != [])
+                        $results->whereIn('user_id', $idag);
+                    if ($results->isEmpty())
+                        return [];
+                }
             }
 
             //
@@ -525,7 +533,7 @@ class PropertyController extends Controller
             return new PropertyCollection($results->paginate());
         } catch (\Throwable $th) {
             return $th;
-           // return ['message' => 'error, can not retrieve data'];
+            // return ['message' => 'error, can not retrieve data'];
         }
     }
 
