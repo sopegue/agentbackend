@@ -236,6 +236,62 @@ class PropertyController extends Controller
     }
 
     /**
+     * Show the specified resource by type skip 6.
+     *
+     * @param  string  $key
+     * @return \Illuminate\Http\Response
+     */
+    public function searchKeyApi($key)
+    {
+        //
+        $results = [];
+        $presearches = DB::table('adresses')->where('adresse', 'like',  $key . '%')
+            ->orWhere('adresse', 'like',  '%' . $key . '%')
+            ->orWhere('adresse', 'like',  '%' . $key)
+            ->orWhere('ville', 'like',  $key . '%')
+            ->orWhere('ville', 'like',  '%' . $key . '%')
+            ->orWhere('ville', 'like',  '%' . $key)
+            ->orderByDesc('created_at')
+            ->get();
+        if (!$presearches->isEmpty()) {
+            foreach ($presearches as $key => $value) {
+                array_push($results, ["adresse" => $value->adresse, "ville" => $value->ville]);
+            }
+        } else {
+            $searches = Adresse::selectRaw('*, levenshtein(?, `adresse`) as `diff`', [$key])
+                ->havingBetween('diff', [0, 8])
+                ->orderBy('diff')
+                ->get()
+                ->reject(function ($value, $key) {
+                    return $value->adresse == null;
+                });
+            if (!$searches->isEmpty()) {
+                foreach ($searches as $key => $value) {
+                    array_push($results, ["adresse" => $value->adresse, "ville" => $value->ville]);
+                }
+            } else {
+                $villes = Adresse::selectRaw('*, levenshtein(?, `ville`) as `diff`', [$key])
+                    ->havingBetween('diff', [0, 8])
+                    ->orderBy('diff')
+                    ->get()
+                    ->reject(function ($value, $key) {
+                        return $value->ville == null;
+                    });
+                if (!$villes->isEmpty()) {
+                    foreach ($villes as $key => $value) {
+                        array_push($results, ["adresse" => $value->adresse, "ville" => $value->ville]);
+                    }
+                }
+            }
+        }
+        return
+            ["adresse" => $results];
+        // return $searches;
+        // return new PropertyCollection(Propertie::take(2)->get());
+    }
+
+
+    /**
      * Show the specified resource by filter with search.
      *
      * @param  \Illuminate\Http\Request  $request

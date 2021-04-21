@@ -77,6 +77,8 @@ Route::post('agent/existence', [AgentAuthController::class, 'isEmailFreeApi']);
 
 Route::post('agence/existence', [AgenceController::class, 'isEmailFreeApi']);
 
+
+Route::get('properties/search/{key}', [PropertyController::class, 'searchKeyApi']);
 Route::post('properties/search', [PropertyController::class, 'searchApi']);
 Route::get('properties/bytype/{type}', [PropertyController::class, 'showByType']);
 Route::get('properties/bytype/skip/{type}', [PropertyController::class, 'showByTypeSkip']);
