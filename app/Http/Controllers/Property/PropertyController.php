@@ -316,16 +316,41 @@ class PropertyController extends Controller
             $idag = [];
             if ($what == 'Acheter' || $what == 'Louer') {
                 if ($search != null && $search != "") {
-                    $adresse1 = Adresse::where('adresse', 'like', '%' . $search . '%')->get();
-                    $adresse2 = Adresse::where('ville', 'like', '%' . $search . '%')->get();
+                    $adresse1 = DB::table('adresses')->where('adresse', 'like',  $search . '%')
+                        ->orWhere('adresse', 'like',  '%' . $search . '%')
+                        ->orWhere('adresse', 'like',  '%' . $search)
+                        ->orWhere('ville', 'like',  $search . '%')
+                        ->orWhere('ville', 'like',  '%' . $search . '%')
+                        ->orWhere('ville', 'like',  '%' . $search)
+                        ->orWhereIn('adresse', [$search])
+                        ->get();
                     if (!$adresse1->isEmpty()) {
                         foreach ($adresse1 as $key => $value) {
                             array_push($idprop, $value->id);
                         }
-                    }
-                    if (!$adresse2->isEmpty()) {
-                        foreach ($adresse2 as $key => $value) {
-                            array_push($idprop, $value->id);
+                    } else {
+                        $searches = Adresse::selectRaw('*, levenshtein(?, `adresse`) as `diff`', [$search])
+                            ->havingBetween('diff', [0, 8])
+                            ->get()
+                            ->reject(function ($value, $key) {
+                                return $value->adresse == null;
+                            });
+                        if (!$searches->isEmpty()) {
+                            foreach ($searches as $key => $value) {
+                                array_push($idprop, $value->id);
+                            }
+                        } else {
+                            $villes = Adresse::selectRaw('*, levenshtein(?, `ville`) as `diff`', [$search])
+                                ->havingBetween('diff', [0, 8])
+                                ->get()
+                                ->reject(function ($value, $key) {
+                                    return $value->ville == null;
+                                });
+                            if (!$villes->isEmpty()) {
+                                foreach ($villes as $key => $value) {
+                                    array_push($idprop, $value->id);
+                                }
+                            }
                         }
                     }
                     if ($idprop != [])
@@ -338,10 +363,22 @@ class PropertyController extends Controller
                 }
             } else if ($what == 'Agent') {
                 if ($search != null && $search != "") {
-                    $ag = Agence::where('name', 'like', '%' . $search . '%')->get();
+                    $ag = Agence::where('name', 'like', $search . '%')
+                        ->orWhere('name', 'like', '%' . $search . '%')
+                        ->orWhere('name', 'like', '%' . $search)
+                        ->get();
                     if (!$ag->isEmpty()) {
                         foreach ($ag as $key => $value) {
                             array_push($idag, $value->user_id);
+                        }
+                    } else {
+                        $agences = Agence::selectRaw('*, levenshtein(?, `name`) as `diff`', [$search])
+                            ->havingBetween('diff', [0, 8])
+                            ->get();
+                        if (!$agences->isEmpty()) {
+                            foreach ($agences as $key => $value) {
+                                array_push($idag, $value->id);
+                            }
                         }
                     }
 
@@ -355,37 +392,66 @@ class PropertyController extends Controller
                 }
             } else {
                 if ($search != null && $search != "") {
-                    $adresse1 = Adresse::where('adresse', 'like', '%' . $search . '%')->get();
-                    $adresse2 = Adresse::where('ville', 'like', '%' . $search . '%')->get();
+                    $adresse1 = DB::table('adresses')->where('adresse', 'like',  $search . '%')
+                        ->orWhere('adresse', 'like',  '%' . $search . '%')
+                        ->orWhere('adresse', 'like',  '%' . $search)
+                        ->orWhere('ville', 'like',  $search . '%')
+                        ->orWhere('ville', 'like',  '%' . $search . '%')
+                        ->orWhere('ville', 'like',  '%' . $search)
+                        ->orWhereIn('adresse', [$search])
+                        ->get();
                     if (!$adresse1->isEmpty()) {
                         foreach ($adresse1 as $key => $value) {
                             array_push($idprop, $value->id);
                         }
-                    }
-                    if (!$adresse2->isEmpty()) {
-                        foreach ($adresse2 as $key => $value) {
-                            array_push($idprop, $value->id);
-                        }
-                    }
-                    $ag = Agence::where('name', 'like', '%' . $search . '%')->get();
-                    if (!$ag->isEmpty()) {
-                        foreach ($ag as $key => $value) {
-                            array_push($idag, $value->user_id);
+                    } else {
+                        $ag = Agence::where('name', 'like', $search . '%')
+                            ->orWhere('name', 'like', '%' . $search . '%')
+                            ->orWhere('name', 'like', '%' . $search)
+                            ->get();
+                        if (!$ag->isEmpty()) {
+                            foreach ($ag as $key => $value) {
+                                array_push($idprop, $value->user_id);
+                            }
+                        } else {
+                            $searches = Adresse::selectRaw('*, levenshtein(?, `adresse`) as `diff`', [$search])
+                                ->havingBetween('diff', [0, 8])
+                                ->get()
+                                ->reject(function ($value, $key) {
+                                    return $value->adresse == null;
+                                });
+                            if (!$searches->isEmpty()) {
+                                foreach ($searches as $key => $value) {
+                                    array_push($idprop, $value->id);
+                                }
+                            } else {
+                                $villes = Adresse::selectRaw('*, levenshtein(?, `ville`) as `diff`', [$search])
+                                    ->havingBetween('diff', [0, 8])
+                                    ->get()
+                                    ->reject(function ($value, $key) {
+                                        return $value->ville == null;
+                                    });
+                                if (!$villes->isEmpty()) {
+                                    foreach ($villes as $key => $value) {
+                                        array_push($idprop, $value->id);
+                                    }
+                                } else {
+                                    $agences = Agence::selectRaw('*, levenshtein(?, `name`) as `diff`', [$search])
+                                        ->havingBetween('diff', [0, 8])
+                                        ->get();
+                                    if (!$agences->isEmpty()) {
+                                        foreach ($agences as $key => $value) {
+                                            array_push($idprop, $value->id);
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                     if ($idprop != [])
                         $results->whereIn('adresse_id', $idprop);
                     else {
                         return ["data" => []];
-                    }
-                    if ($results->count() == 0) {
-                        if ($idag != [])
-                            $results->whereIn('user_id', $idag);
-                        else {
-                            return ["data" => []];
-                        }
-                        if ($results->count() == 0)
-                            return ["data" => []];
                     }
                 }
             }
