@@ -254,8 +254,8 @@ class PropertyController extends Controller
             $query->orWhere('ville', 'like',  '%' . $key);
             $query->orWhereIn('adresse', [$key]);
             $query->orWhereIn('ville', [$key]);
-            $query->orderByDesc('created_at');
-        })->take(20)
+        })->orderByDesc('created_at')
+            ->take(20)
             ->get();
         if (!$presearches->isEmpty()) {
             foreach ($presearches as $key => $value) {
