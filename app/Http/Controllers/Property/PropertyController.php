@@ -252,6 +252,7 @@ class PropertyController extends Controller
             ->orWhere('ville', 'like',  '%' . $key . '%')
             ->orWhere('ville', 'like',  '%' . $key)
             ->orderByDesc('created_at')
+            ->take(20)
             ->get();
         if (!$presearches->isEmpty()) {
             foreach ($presearches as $key => $value) {
@@ -261,6 +262,7 @@ class PropertyController extends Controller
             $searches = Adresse::selectRaw('*, levenshtein(?, `adresse`) as `diff`', [$key])
                 ->havingBetween('diff', [0, 8])
                 ->orderBy('diff')
+                ->take(20)
                 ->get()
                 ->reject(function ($value, $key) {
                     return $value->adresse == null;
@@ -273,6 +275,7 @@ class PropertyController extends Controller
                 $villes = Adresse::selectRaw('*, levenshtein(?, `ville`) as `diff`', [$key])
                     ->havingBetween('diff', [0, 8])
                     ->orderBy('diff')
+                    ->take(20)
                     ->get()
                     ->reject(function ($value, $key) {
                         return $value->ville == null;
