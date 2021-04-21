@@ -350,6 +350,17 @@ class PropertyController extends Controller
                                 foreach ($villes as $key => $value) {
                                     array_push($idprop, $value->id);
                                 }
+                            } else {
+
+                                $searches = Adresse::selectRaw('*, INSTR(?, `adresse`) as `co`', [$search])
+                                    ->having('co', '>', [0])
+                                    ->get();
+
+                                if (!$searches->isEmpty()) {
+                                    foreach ($searches as $key => $value) {
+                                        array_push($idprop, $value->id);
+                                    }
+                                }
                             }
                         }
                     }
@@ -360,6 +371,8 @@ class PropertyController extends Controller
                     }
                     if ($results->count() == 0)
                         return ["data" => []];
+
+                    // return "not null";
                 }
             } else if ($what == 'Agent') {
                 if ($search != null && $search != "") {
