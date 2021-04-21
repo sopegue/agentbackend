@@ -329,8 +329,8 @@ class PropertyController extends Controller
         try {
 
             $results = Propertie::query();
-            $what = 'Acheter';
-            $sort = 'Le plus pertient';
+            $what = $request->filter['what'];
+            $sort = $request->sort;
             $search = $request->search;
             $idprop = [];
             $idag = [];
@@ -380,6 +380,16 @@ class PropertyController extends Controller
                                     foreach ($searches as $key => $value) {
                                         array_push($idprop, $value->id);
                                     }
+                                } else {
+                                    $searches = Adresse::selectRaw('*, INSTR(?, `ville`) as `co`', [$search])
+                                        ->having('co', '>', [0])
+                                        ->get();
+
+                                    if (!$searches->isEmpty()) {
+                                        foreach ($searches as $key => $value) {
+                                            array_push($idprop, $value->id);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -411,7 +421,18 @@ class PropertyController extends Controller
                             ->get();
                         if (!$agences->isEmpty()) {
                             foreach ($agences as $key => $value) {
-                                array_push($idag, $value->id);
+                                array_push($idag, $value->user_id);
+                            }
+                        } else {
+
+                            $searches = Agence::selectRaw('*, INSTR(?, `name`) as `co`', [$search])
+                                ->having('co', '>', [0])
+                                ->get();
+
+                            if (!$searches->isEmpty()) {
+                                foreach ($searches as $key => $value) {
+                                    array_push($idag, $value->user_id);
+                                }
                             }
                         }
                     }
@@ -445,7 +466,7 @@ class PropertyController extends Controller
                             ->get();
                         if (!$ag->isEmpty()) {
                             foreach ($ag as $key => $value) {
-                                array_push($idprop, $value->user_id);
+                                array_push($idag, $value->user_id);
                             }
                         } else {
                             $searches = Adresse::selectRaw('*, levenshtein(?, `adresse`) as `diff`', [$search])
@@ -475,7 +496,39 @@ class PropertyController extends Controller
                                         ->get();
                                     if (!$agences->isEmpty()) {
                                         foreach ($agences as $key => $value) {
-                                            array_push($idprop, $value->id);
+                                            array_push($idag, $value->user_id);
+                                        }
+                                    } else {
+
+                                        $searches = Adresse::selectRaw('*, INSTR(?, `adresse`) as `co`', [$search])
+                                            ->having('co', '>', [0])
+                                            ->get();
+
+                                        if (!$searches->isEmpty()) {
+                                            foreach ($searches as $key => $value) {
+                                                array_push($idprop, $value->id);
+                                            }
+                                        } else {
+                                            $searches = Adresse::selectRaw('*, INSTR(?, `ville`) as `co`', [$search])
+                                                ->having('co', '>', [0])
+                                                ->get();
+
+                                            if (!$searches->isEmpty()) {
+                                                foreach ($searches as $key => $value) {
+                                                    array_push($idprop, $value->id);
+                                                }
+                                            } else {
+
+                                                $searches = Agence::selectRaw('*, INSTR(?, `name`) as `co`', [$search])
+                                                    ->having('co', '>', [0])
+                                                    ->get();
+
+                                                if (!$searches->isEmpty()) {
+                                                    foreach ($searches as $key => $value) {
+                                                        array_push($idag, $value->user_id);
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -484,9 +537,13 @@ class PropertyController extends Controller
                     }
                     if ($idprop != [])
                         $results->whereIn('adresse_id', $idprop);
+                    else if ($idag != [])
+                        $results->whereIn('user_id', $idag);
                     else {
                         return ["data" => []];
                     }
+                    if ($results->count() == 0)
+                        return ["data" => []];
                 }
             }
 
