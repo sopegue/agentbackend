@@ -273,7 +273,7 @@ class PropertyController extends Controller
                 else {
                     return [];
                 }
-                if ($results->isEmpty())
+                if ($results->count() == 0)
                     return [];
             } else if ($what == 'Agent') {
                 if ($search != null && $search != "") {
@@ -289,7 +289,7 @@ class PropertyController extends Controller
                 else {
                     return [];
                 }
-                if ($results->isEmpty())
+                if ($results->count() == 0)
                     return [];
             } else {
                 if ($search != null && $search != "") {
@@ -317,13 +317,13 @@ class PropertyController extends Controller
                 else {
                     return [];
                 }
-                if ($results->isEmpty()) {
+                if ($results->count() == 0) {
                     if ($idag != [])
                         $results->whereIn('user_id', $idag);
                     else {
                         return [];
                     }
-                    if ($results->isEmpty())
+                    if ($results->count() == 0)
                         return [];
                 }
             }
