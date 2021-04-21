@@ -286,6 +286,26 @@ class PropertyController extends Controller
                     foreach ($villes as $key => $value) {
                         array_push($results, ["adresse" => $value->adresse, "ville" => $value->ville]);
                     }
+                } else {
+                    $searches = Adresse::selectRaw('*, INSTR(?, `adresse`) as `co`', [$key])
+                        ->having('co', '>', [0])
+                        ->get();
+
+                    if (!$searches->isEmpty()) {
+                        foreach ($searches as $key => $value) {
+                            array_push($results, ["adresse" => $value->adresse, "ville" => $value->ville]);
+                        }
+                    } else {
+                        $searches = Adresse::selectRaw('*, INSTR(?, `ville`) as `co`', [$key])
+                            ->having('co', '>', [0])
+                            ->get();
+
+                        if (!$searches->isEmpty()) {
+                            foreach ($searches as $key => $value) {
+                                array_push($results, ["adresse" => $value->adresse, "ville" => $value->ville]);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -309,8 +329,8 @@ class PropertyController extends Controller
         try {
 
             $results = Propertie::query();
-            $what = $request->filter['what'];
-            $sort = $request->sort;
+            $what = 'Acheter';
+            $sort = 'Le plus pertient';
             $search = $request->search;
             $idprop = [];
             $idag = [];
@@ -374,6 +394,7 @@ class PropertyController extends Controller
 
                     // return "not null";
                 }
+                // return $results->get();
             } else if ($what == 'Agent') {
                 if ($search != null && $search != "") {
                     $ag = Agence::where('name', 'like', $search . '%')
