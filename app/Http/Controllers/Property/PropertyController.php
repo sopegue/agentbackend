@@ -251,6 +251,8 @@ class PropertyController extends Controller
             ->orWhere('ville', 'like',  $key . '%')
             ->orWhere('ville', 'like',  '%' . $key . '%')
             ->orWhere('ville', 'like',  '%' . $key)
+            ->orWhereIn('adresse', [$key])
+            ->orWhereIn('ville', [$key])
             ->orderByDesc('created_at')
             ->take(20)
             ->get();
