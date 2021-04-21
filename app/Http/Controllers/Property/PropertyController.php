@@ -349,44 +349,44 @@ class PropertyController extends Controller
                             array_push($idprop, $value->id);
                         }
                     } else {
-                        $searches = Adresse::selectRaw('*, levenshtein(?, `adresse`) as `diff`', [$search])
-                            ->havingBetween('diff', [0, 8])
-                            ->get()
-                            ->reject(function ($value, $key) {
-                                return $value->adresse == null;
-                            });
+
+                        $searches = Adresse::selectRaw('*, INSTR(?, `adresse`) as `co`', [$search])
+                            ->having('co', '>', [0])
+                            ->get();
+
                         if (!$searches->isEmpty()) {
                             foreach ($searches as $key => $value) {
                                 array_push($idprop, $value->id);
                             }
                         } else {
-                            $villes = Adresse::selectRaw('*, levenshtein(?, `ville`) as `diff`', [$search])
-                                ->havingBetween('diff', [0, 8])
-                                ->get()
-                                ->reject(function ($value, $key) {
-                                    return $value->ville == null;
-                                });
-                            if (!$villes->isEmpty()) {
-                                foreach ($villes as $key => $value) {
+                            $searches = Adresse::selectRaw('*, INSTR(?, `ville`) as `co`', [$search])
+                                ->having('co', '>', [0])
+                                ->get();
+
+                            if (!$searches->isEmpty()) {
+                                foreach ($searches as $key => $value) {
                                     array_push($idprop, $value->id);
                                 }
                             } else {
-
-                                $searches = Adresse::selectRaw('*, INSTR(?, `adresse`) as `co`', [$search])
-                                    ->having('co', '>', [0])
-                                    ->get();
-
+                                $searches = Adresse::selectRaw('*, levenshtein(?, `adresse`) as `diff`', [$search])
+                                    ->havingBetween('diff', [0, 8])
+                                    ->get()
+                                    ->reject(function ($value, $key) {
+                                        return $value->adresse == null;
+                                    });
                                 if (!$searches->isEmpty()) {
                                     foreach ($searches as $key => $value) {
                                         array_push($idprop, $value->id);
                                     }
                                 } else {
-                                    $searches = Adresse::selectRaw('*, INSTR(?, `ville`) as `co`', [$search])
-                                        ->having('co', '>', [0])
-                                        ->get();
-
-                                    if (!$searches->isEmpty()) {
-                                        foreach ($searches as $key => $value) {
+                                    $villes = Adresse::selectRaw('*, levenshtein(?, `ville`) as `diff`', [$search])
+                                        ->havingBetween('diff', [0, 8])
+                                        ->get()
+                                        ->reject(function ($value, $key) {
+                                            return $value->ville == null;
+                                        });
+                                    if (!$villes->isEmpty()) {
+                                        foreach ($villes as $key => $value) {
                                             array_push($idprop, $value->id);
                                         }
                                     }
@@ -416,21 +416,21 @@ class PropertyController extends Controller
                             array_push($idag, $value->user_id);
                         }
                     } else {
-                        $agences = Agence::selectRaw('*, levenshtein(?, `name`) as `diff`', [$search])
-                            ->havingBetween('diff', [0, 8])
+
+                        $searches = Agence::selectRaw('*, INSTR(?, `name`) as `co`', [$search])
+                            ->having('co', '>', [0])
                             ->get();
-                        if (!$agences->isEmpty()) {
-                            foreach ($agences as $key => $value) {
+
+                        if (!$searches->isEmpty()) {
+                            foreach ($searches as $key => $value) {
                                 array_push($idag, $value->user_id);
                             }
                         } else {
-
-                            $searches = Agence::selectRaw('*, INSTR(?, `name`) as `co`', [$search])
-                                ->having('co', '>', [0])
+                            $agences = Agence::selectRaw('*, levenshtein(?, `name`) as `diff`', [$search])
+                                ->havingBetween('diff', [0, 8])
                                 ->get();
-
-                            if (!$searches->isEmpty()) {
-                                foreach ($searches as $key => $value) {
+                            if (!$agences->isEmpty()) {
+                                foreach ($agences as $key => $value) {
                                     array_push($idag, $value->user_id);
                                 }
                             }
@@ -469,62 +469,62 @@ class PropertyController extends Controller
                                 array_push($idag, $value->user_id);
                             }
                         } else {
-                            $searches = Adresse::selectRaw('*, levenshtein(?, `adresse`) as `diff`', [$search])
-                                ->havingBetween('diff', [0, 8])
-                                ->get()
-                                ->reject(function ($value, $key) {
-                                    return $value->adresse == null;
-                                });
+
+                            $searches = Adresse::selectRaw('*, INSTR(?, `adresse`) as `co`', [$search])
+                                ->having('co', '>', [0])
+                                ->get();
+
                             if (!$searches->isEmpty()) {
                                 foreach ($searches as $key => $value) {
                                     array_push($idprop, $value->id);
                                 }
                             } else {
-                                $villes = Adresse::selectRaw('*, levenshtein(?, `ville`) as `diff`', [$search])
-                                    ->havingBetween('diff', [0, 8])
-                                    ->get()
-                                    ->reject(function ($value, $key) {
-                                        return $value->ville == null;
-                                    });
-                                if (!$villes->isEmpty()) {
-                                    foreach ($villes as $key => $value) {
+                                $searches = Adresse::selectRaw('*, INSTR(?, `ville`) as `co`', [$search])
+                                    ->having('co', '>', [0])
+                                    ->get();
+
+                                if (!$searches->isEmpty()) {
+                                    foreach ($searches as $key => $value) {
                                         array_push($idprop, $value->id);
                                     }
                                 } else {
-                                    $agences = Agence::selectRaw('*, levenshtein(?, `name`) as `diff`', [$search])
-                                        ->havingBetween('diff', [0, 8])
+
+                                    $searches = Agence::selectRaw('*, INSTR(?, `name`) as `co`', [$search])
+                                        ->having('co', '>', [0])
                                         ->get();
-                                    if (!$agences->isEmpty()) {
-                                        foreach ($agences as $key => $value) {
+
+                                    if (!$searches->isEmpty()) {
+                                        foreach ($searches as $key => $value) {
                                             array_push($idag, $value->user_id);
                                         }
                                     } else {
-
-                                        $searches = Adresse::selectRaw('*, INSTR(?, `adresse`) as `co`', [$search])
-                                            ->having('co', '>', [0])
-                                            ->get();
-
+                                        $searches = Adresse::selectRaw('*, levenshtein(?, `adresse`) as `diff`', [$search])
+                                            ->havingBetween('diff', [0, 8])
+                                            ->get()
+                                            ->reject(function ($value, $key) {
+                                                return $value->adresse == null;
+                                            });
                                         if (!$searches->isEmpty()) {
                                             foreach ($searches as $key => $value) {
                                                 array_push($idprop, $value->id);
                                             }
                                         } else {
-                                            $searches = Adresse::selectRaw('*, INSTR(?, `ville`) as `co`', [$search])
-                                                ->having('co', '>', [0])
-                                                ->get();
-
-                                            if (!$searches->isEmpty()) {
-                                                foreach ($searches as $key => $value) {
+                                            $villes = Adresse::selectRaw('*, levenshtein(?, `ville`) as `diff`', [$search])
+                                                ->havingBetween('diff', [0, 8])
+                                                ->get()
+                                                ->reject(function ($value, $key) {
+                                                    return $value->ville == null;
+                                                });
+                                            if (!$villes->isEmpty()) {
+                                                foreach ($villes as $key => $value) {
                                                     array_push($idprop, $value->id);
                                                 }
                                             } else {
-
-                                                $searches = Agence::selectRaw('*, INSTR(?, `name`) as `co`', [$search])
-                                                    ->having('co', '>', [0])
+                                                $agences = Agence::selectRaw('*, levenshtein(?, `name`) as `diff`', [$search])
+                                                    ->havingBetween('diff', [0, 8])
                                                     ->get();
-
-                                                if (!$searches->isEmpty()) {
-                                                    foreach ($searches as $key => $value) {
+                                                if (!$agences->isEmpty()) {
+                                                    foreach ($agences as $key => $value) {
                                                         array_push($idag, $value->user_id);
                                                     }
                                                 }
