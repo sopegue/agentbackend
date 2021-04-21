@@ -270,7 +270,9 @@ class PropertyController extends Controller
                 }
                 if ($idprop != [])
                     $results->whereIn('adresse_id', $idprop);
-
+                else {
+                    return [];
+                }
                 if ($results->isEmpty())
                     return [];
             } else if ($what == 'Agent') {
@@ -284,6 +286,9 @@ class PropertyController extends Controller
                 }
                 if ($idag != [])
                     $results->whereIn('user_id', $idag);
+                else {
+                    return [];
+                }
                 if ($results->isEmpty())
                     return [];
             } else {
@@ -309,9 +314,15 @@ class PropertyController extends Controller
                 }
                 if ($idprop != [])
                     $results->whereIn('adresse_id', $idprop);
+                else {
+                    return [];
+                }
                 if ($results->isEmpty()) {
                     if ($idag != [])
                         $results->whereIn('user_id', $idag);
+                    else {
+                        return [];
+                    }
                     if ($results->isEmpty())
                         return [];
                 }
