@@ -267,14 +267,14 @@ class PropertyController extends Controller
                             array_push($idprop, $value->id);
                         }
                     }
+                    if ($idprop != [])
+                        $results->whereIn('adresse_id', $idprop);
+                    else {
+                        return ["data" => []];
+                    }
+                    if ($results->count() == 0)
+                        return ["data" => []];
                 }
-                if ($idprop != [])
-                    $results->whereIn('adresse_id', $idprop);
-                else {
-                    return ["data" => []];
-                }
-                if ($results->count() == 0)
-                    return ["data" => []];
             } else if ($what == 'Agent') {
                 if ($search != null && $search != "") {
                     $ag = Agence::where('name', 'like', '%' . $search . '%')->get();
@@ -283,14 +283,15 @@ class PropertyController extends Controller
                             array_push($idag, $value->user_id);
                         }
                     }
+
+                    if ($idag != [])
+                        $results->whereIn('user_id', $idag);
+                    else {
+                        return ["data" => []];
+                    }
+                    if ($results->count() == 0)
+                        return ["data" => []];
                 }
-                if ($idag != [])
-                    $results->whereIn('user_id', $idag);
-                else {
-                    return ["data" => []];
-                }
-                if ($results->count() == 0)
-                    return ["data" => []];
             } else {
                 if ($search != null && $search != "") {
                     $adresse1 = Adresse::where('adresse', 'like', '%' . $search . '%')->get();
@@ -311,20 +312,20 @@ class PropertyController extends Controller
                             array_push($idag, $value->user_id);
                         }
                     }
-                }
-                if ($idprop != [])
-                    $results->whereIn('adresse_id', $idprop);
-                else {
-                    return ["data" => []];
-                }
-                if ($results->count() == 0) {
-                    if ($idag != [])
-                        $results->whereIn('user_id', $idag);
+                    if ($idprop != [])
+                        $results->whereIn('adresse_id', $idprop);
                     else {
                         return ["data" => []];
                     }
-                    if ($results->count() == 0)
-                        return ["data" => []];
+                    if ($results->count() == 0) {
+                        if ($idag != [])
+                            $results->whereIn('user_id', $idag);
+                        else {
+                            return ["data" => []];
+                        }
+                        if ($results->count() == 0)
+                            return ["data" => []];
+                    }
                 }
             }
 
