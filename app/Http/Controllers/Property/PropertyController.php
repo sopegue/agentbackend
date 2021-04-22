@@ -341,15 +341,15 @@ class PropertyController extends Controller
             $idag = [];
             if ($what == 'Acheter' || $what == 'Louer') {
                 if ($search != null && $search != "") {
-                    $adresse1 = Adresse::has('property')
-                        ->where('adresse', 'like',  $search . '%')
-                        ->orWhere('adresse', 'like',  '%' . $search . '%')
-                        ->orWhere('adresse', 'like',  '%' . $search)
-                        ->orWhere('ville', 'like',  $search . '%')
-                        ->orWhere('ville', 'like',  '%' . $search . '%')
-                        ->orWhere('ville', 'like',  '%' . $search)
-                        ->orWhereIn('adresse', [$search])
-                        ->get();
+                    $adresse1 = Adresse::whereHas('property', function (Builder $query) use ($search) {
+                        $query->where('adresse', 'like',  $search . '%');
+                        $query->orWhere('adresse', 'like',  '%' . $search . '%');
+                        $query->orWhere('adresse', 'like',  '%' . $search);
+                        $query->orWhere('ville', 'like',  $search . '%');
+                        $query->orWhere('ville', 'like',  '%' . $search . '%');
+                        $query->orWhere('ville', 'like',  '%' . $search);
+                        $query->orWhereIn('adresse', [$search]);
+                    })->get();
                     if (!$adresse1->isEmpty()) {
                         foreach ($adresse1 as $key => $value) {
                             array_push($idprop, $value->id);
@@ -457,15 +457,15 @@ class PropertyController extends Controller
                 }
             } else {
                 if ($search != null && $search != "") {
-                    $adresse1 = Adresse::has('property')
-                        ->where('adresse', 'like',  $search . '%')
-                        ->orWhere('adresse', 'like',  '%' . $search . '%')
-                        ->orWhere('adresse', 'like',  '%' . $search)
-                        ->orWhere('ville', 'like',  $search . '%')
-                        ->orWhere('ville', 'like',  '%' . $search . '%')
-                        ->orWhere('ville', 'like',  '%' . $search)
-                        ->orWhereIn('adresse', [$search])
-                        ->get();
+                    $adresse1 = Adresse::whereHas('property', function (Builder $query) use ($search) {
+                        $query->where('adresse', 'like',  $search . '%');
+                        $query->orWhere('adresse', 'like',  '%' . $search . '%');
+                        $query->orWhere('adresse', 'like',  '%' . $search);
+                        $query->orWhere('ville', 'like',  $search . '%');
+                        $query->orWhere('ville', 'like',  '%' . $search . '%');
+                        $query->orWhere('ville', 'like',  '%' . $search);
+                        $query->orWhereIn('adresse', [$search]);
+                    })->get();
                     if (!$adresse1->isEmpty()) {
                         foreach ($adresse1 as $key => $value) {
                             array_push($idprop, $value->id);
