@@ -188,7 +188,10 @@ class PropertyController extends Controller
     public function showByType(Request $request)
     {
         //
-        return new PropertyCollection(Propertie::where('type', $request->type)->take(7)->get());
+        return new PropertyCollection(Propertie::where('type', $request->type)
+            ->orderByDesc('visites')
+            ->take(7)
+            ->get());
     }
 
     /**
@@ -200,7 +203,11 @@ class PropertyController extends Controller
     public function showByTypeSkip(Request $request)
     {
         //
-        return new PropertyCollection(Propertie::where('type', $request->type)->skip(6)->take(6)->get());
+        return new PropertyCollection(Propertie::where('type', $request->type)
+            ->orderByDesc('visites')
+            ->skip(6)
+            ->take(6)
+            ->get());
     }
 
     /**
