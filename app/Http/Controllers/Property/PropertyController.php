@@ -284,7 +284,7 @@ class PropertyController extends Controller
                 } else {
                     $searches = Adresse::has('property')
                         ->selectRaw('*, levenshtein(?, `adresse`) as `diff`', [$key])
-                        ->havingBetween('diff', [0, 8])
+                        ->havingBetween('diff', [0, 4])
                         ->orderBy('diff')
                         ->take(20)
                         ->get()
@@ -298,7 +298,7 @@ class PropertyController extends Controller
                     } else {
                         $villes = Adresse::has('property')
                             ->selectRaw('*, levenshtein(?, `ville`) as `diff`', [$key])
-                            ->havingBetween('diff', [0, 8])
+                            ->havingBetween('diff', [0, 4])
                             ->orderBy('diff')
                             ->take(20)
                             ->get()
@@ -378,7 +378,7 @@ class PropertyController extends Controller
                             } else {
                                 $searches = Adresse::has('property')
                                     ->selectRaw('*, levenshtein(?, `adresse`) as `diff`', [$search])
-                                    ->havingBetween('diff', [0, 8])
+                                    ->havingBetween('diff', [0, 4])
                                     ->get()
                                     ->reject(function ($value, $key) {
                                         return $value->adresse == null;
@@ -390,7 +390,7 @@ class PropertyController extends Controller
                                 } else {
                                     $villes = Adresse::has('property')
                                         ->selectRaw('*, levenshtein(?, `ville`) as `diff`', [$search])
-                                        ->havingBetween('diff', [0, 8])
+                                        ->havingBetween('diff', [0, 4])
                                         ->get()
                                         ->reject(function ($value, $key) {
                                             return $value->ville == null;
@@ -437,7 +437,7 @@ class PropertyController extends Controller
                             }
                         } else {
                             $agences = Agence::selectRaw('*, levenshtein(?, `name`) as `diff`', [$search])
-                                ->havingBetween('diff', [0, 8])
+                                ->havingBetween('diff', [0, 4])
                                 ->get();
                             if (!$agences->isEmpty()) {
                                 foreach ($agences as $key => $value) {
@@ -513,7 +513,7 @@ class PropertyController extends Controller
                                     } else {
                                         $searches = Adresse::has('property')
                                             ->selectRaw('*, levenshtein(?, `adresse`) as `diff`', [$search])
-                                            ->havingBetween('diff', [0, 8])
+                                            ->havingBetween('diff', [0, 4])
                                             ->get()
                                             ->reject(function ($value, $key) {
                                                 return $value->adresse == null;
@@ -525,7 +525,7 @@ class PropertyController extends Controller
                                         } else {
                                             $villes = Adresse::has('property')
                                                 ->selectRaw('*, levenshtein(?, `ville`) as `diff`', [$search])
-                                                ->havingBetween('diff', [0, 8])
+                                                ->havingBetween('diff', [0, 4])
                                                 ->get()
                                                 ->reject(function ($value, $key) {
                                                     return $value->ville == null;
@@ -536,7 +536,7 @@ class PropertyController extends Controller
                                                 }
                                             } else {
                                                 $agences = Agence::selectRaw('*, levenshtein(?, `name`) as `diff`', [$search])
-                                                    ->havingBetween('diff', [0, 8])
+                                                    ->havingBetween('diff', [0, 4])
                                                     ->get();
                                                 if (!$agences->isEmpty()) {
                                                     foreach ($agences as $key => $value) {
