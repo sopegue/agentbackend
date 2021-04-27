@@ -257,12 +257,13 @@ class PropertyController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      */
-    public function propVilleFirstApi($ville)
+    public function propVilleFirstApi($ville, $id)
     {
         //
         try {
-            return Propertie::whereHas('adresse', function (Builder $query) use ($ville) {
+            return Propertie::whereHas('adresse', function (Builder $query) use ($ville, $id) {
                 $query->where('ville', $ville);
+                $query->where('id', '<>', $id);
             })->count();
         } catch (\Throwable $th) {
             return 0;
@@ -275,12 +276,13 @@ class PropertyController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      */
-    public function propVilleApi($ville)
+    public function propVilleApi($ville, $id)
     {
         //
         try {
-            return new PropertyCollection(Propertie::whereHas('adresse', function (Builder $query) use ($ville) {
+            return new PropertyCollection(Propertie::whereHas('adresse', function (Builder $query) use ($ville, $id) {
                 $query->where('ville', $ville);
+                $query->where('id', '<>', $id);
             })->take(20)
                 ->get());
         } catch (\Throwable $th) {
