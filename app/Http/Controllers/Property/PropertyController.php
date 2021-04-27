@@ -474,12 +474,18 @@ class PropertyController extends Controller
                 }
             }
             if ($ids != []) {
-                $results->whereIn('id', $ids);
-                if ($user->retired_sold == "yes") {
-                    $results->where('sold', '<>', 'yes');
+                if ($user->retired_sold == "yes" && $user->retired_rent == "no") {
+                    $results->whereIn('id', $ids)
+                        ->where('sold', '<>', 'yes');
                 }
-                if ($user->retired_rent == "yes") {
-                    $results->where('rent', '<>', 'yes');
+                if ($user->retired_rent == "yes" && $user->retired_sold == "no") {
+                    $results->whereIn('id', $ids)
+                        ->where('rent', '<>', 'yes');
+                }
+                if ($user->retired_rent == "yes" && $user->retired_sold == "yes") {
+                    $results->whereIn('id', $ids)
+                        ->where('rent', '<>', 'yes')
+                        ->where('sold', '<>', 'yes');
                 }
                 if ($sort == "Le plus pertinent") {
                     $results->orderByDesc('visites');
