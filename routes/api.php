@@ -77,6 +77,7 @@ Route::post('agent/existence', [AgentAuthController::class, 'isEmailFreeApi']);
 
 Route::post('agence/existence', [AgenceController::class, 'isEmailFreeApi']);
 
+Route::get('properties/fav/{key}/{sort}', [PropertyController::class, 'favPropApi']);
 Route::get('properties/agfirst/{key}/{exclude}', [PropertyController::class, 'propAgCountApi']);
 Route::get('properties/ag/{key}/{exclude}', [PropertyController::class, 'propAgApi']);
 Route::get('properties/villesfirst/{key}/{id}', [PropertyController::class, 'propVilleFirstApi']);

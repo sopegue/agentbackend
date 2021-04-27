@@ -23,6 +23,10 @@ class Propertie extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function properties_saved()
+    {
+        return $this->belongsToMany(User::class);
+    }
     public function images()
     {
         return $this->hasMany(Image::class, 'property_id');

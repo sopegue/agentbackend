@@ -15,6 +15,7 @@ use App\Models\Options\Multioption;
 use App\Models\Options\Option;
 use App\Models\Property\Propertie;
 use App\Models\Property\Save;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -437,6 +438,85 @@ class PropertyController extends Controller
         // return new PropertyCollection(Propertie::take(2)->get());
     }
 
+
+    /**
+     * Show the specified resource by type skip 6.
+     *
+     * @param  string  $key
+     * @return \Illuminate\Http\Response
+     */
+    public function favPropApi($key, $sort)
+    {
+        //
+        try {
+            $results = Propertie::query();
+            $house = [
+                'Studio',
+                'Maison',
+                'Appartement',
+                'Villa',
+                'Haut-Standing',
+                'Bureau',
+                'Magasin',
+                'Terrain',
+            ];
+            if (in_array($sort, $house)) {
+                $house = $this->__unshift($house, $sort);
+            }
+            $ids = [];
+            $user = User::find($key);
+            $prop = $user->properties_saved;
+            if ($prop->isNotEmpty()) {
+                foreach ($prop as $key => $value) {
+                    array_push($ids, $value->id);
+                }
+            }
+            if ($ids != []) {
+                if ($sort == "Le plus pertinent") {
+                    $results->whereIn('id', $ids)
+                        ->orderByDesc('visites')
+                        ->paginate();
+                } else
+                if ($sort == "Le plus ancien") {
+                    $results->whereIn('id', $ids)
+                        ->orderBy('created_at')
+                        ->paginate();
+                } else
+                if ($sort == "Prix croissant") {
+                    $results->whereIn('id', $ids)
+                        ->orderBy('price_fixed')
+                        ->paginate();
+                } else
+                if ($sort == "Prix décroissant") {
+                    $results->whereIn('id', $ids)
+                        ->orderByDesc('price_fixed')
+                        ->paginate();
+                } else {
+                    $res = implode("','", $house);
+                    // return 'FIELD(type, ' . $res . ')';
+                    $results->whereIn('id', $ids)
+                        // \DB::raw("FIELD(id, ".$input['id']." )"))
+                        ->orderByRaw("FIELD(type,  '$res')")
+                        ->paginate();
+                }
+
+                return new PropertyCollection($results->paginate());
+            } else  return ["data" => []];
+        } catch (\Throwable $th) {
+            return $th;
+            return ["data" => []];
+        }
+        // return $searches;
+        // return new PropertyCollection(Propertie::take(2)->get());
+    }
+
+    function __unshift(&$array, $value)
+    {
+        $key = array_search($value, $array);
+        if ($key) unset($array[$key]);
+        array_unshift($array, $value);
+        return $array;
+    }
 
     /**
      * Show the specified resource by filter with search.
