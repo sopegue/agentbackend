@@ -263,8 +263,8 @@ class PropertyController extends Controller
         try {
             return Propertie::whereHas('adresse', function (Builder $query) use ($ville, $id) {
                 $query->where('ville', $ville);
-                $query->where('id', '<>', $id);
-            })->count();
+            })->where('id', '<>', $id)
+                ->count();
         } catch (\Throwable $th) {
             return 0;
         }
@@ -282,8 +282,8 @@ class PropertyController extends Controller
         try {
             return new PropertyCollection(Propertie::whereHas('adresse', function (Builder $query) use ($ville, $id) {
                 $query->where('ville', $ville);
-                $query->where('id', '<>', $id);
-            })->take(20)
+            })->where('id', '<>', $id)
+                ->take(20)
                 ->get());
         } catch (\Throwable $th) {
             return $th;
