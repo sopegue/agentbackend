@@ -86,4 +86,4 @@ Route::get('property/agent/{show}', [PropertyController::class, 'showOwn']);
 Route::get('property/{mark}/{as}/{id}', [PropertyController::class, 'soldOrRent']);
 Route::get('property/visit/{id}', [PropertyController::class, 'visitApi']);
 Route::post('property/update', [PropertyController::class, 'updateApi']);
-Route::post('property/viewed', [PropertyController::class, 'viewedApi']);
+Route::post('properties/viewed', [PropertyController::class, 'viewedApi']);
