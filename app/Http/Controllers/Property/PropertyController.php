@@ -450,7 +450,6 @@ class PropertyController extends Controller
         //
         try {
             $sort = str_replace("-", " ", $sort);
-            return $sort;
             $results = Propertie::query();
             $house = [
                 'Studio',
