@@ -449,7 +449,7 @@ class PropertyController extends Controller
     {
         //
         try {
-            $sort = str_replace("-", " ", $sort);
+
             $results = Propertie::query();
             $house = [
                 'Studio',
@@ -464,6 +464,7 @@ class PropertyController extends Controller
             if (in_array($sort, $house)) {
                 $house = $this->__unshift($house, $sort);
             }
+            $sort = str_replace("-", " ", $sort);
             $ids = [];
             $user = User::find($key);
             $prop = $user->properties_saved;
