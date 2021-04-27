@@ -257,6 +257,47 @@ class PropertyController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      */
+    public function propVilleFirstApi($ville)
+    {
+        //
+        try {
+            return Propertie::whereHas('adresse', function (Builder $query) use ($ville) {
+                $query->where('ville', $ville);
+            })->count();
+        } catch (\Throwable $th) {
+            return 0;
+        }
+    }
+
+    /**
+     * Show the specified resource by filter.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     */
+    public function propVilleApi($ville)
+    {
+        //
+        try {
+            return new PropertyCollection(Propertie::whereHas('adresses', function (Builder $query) use ($ville) {
+                $query->where('ville', $ville);
+            })->take(20)
+                ->get());
+        } catch (\Throwable $th) {
+            //throw $th;
+            return [
+                "message" => "an error occurs",
+                "status" => "500"
+            ];
+        }
+    }
+
+    /**
+     * Show the specified resource by filter.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     */
     public function viewedApi(Request $request)
     {
         //
