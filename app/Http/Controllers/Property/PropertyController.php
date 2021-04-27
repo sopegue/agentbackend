@@ -474,140 +474,28 @@ class PropertyController extends Controller
                 }
             }
             if ($ids != []) {
-                if ($user->retired_sold == "no") {
-                    if ($sort == "Le plus pertinent") {
-                        $results->whereIn('id', $ids)
-                            ->where('retired_sold', 'no')
-                            ->orderByDesc('visites')
-                            ->paginate();
-                    } else
-                    if ($sort == "Le plus ancien") {
-                        $results->whereIn('id', $ids)
-                            ->where('retired_sold', 'no')
-                            ->orderBy('created_at')
-                            ->paginate();
-                    } else
-                    if ($sort == "Prix croissant") {
-                        $results->whereIn('id', $ids)
-                            ->where('retired_sold', 'no')
-                            ->orderBy('price_fixed')
-                            ->paginate();
-                    } else
-                    if ($sort == "Prix décroissant") {
-                        $results->whereIn('id', $ids)
-                            ->where('retired_sold', 'no')
-                            ->orderByDesc('price_fixed')
-                            ->paginate();
-                    } else {
-                        $res = implode("','", $house);
-                        // return 'FIELD(type, ' . $res . ')';
-                        $results->whereIn('id', $ids)
-                            ->where('retired_sold', 'no')
-                            // \DB::raw("FIELD(id, ".$input['id']." )"))
-                            ->orderByRaw("FIELD(type,  '$res')")
-                            ->paginate();
-                    }
-                } else {
-                    if ($sort == "Le plus pertinent") {
-                        $results->whereIn('id', $ids)
-                            ->where('retired_sold', '<>', 'yes')
-                            ->orderByDesc('visites')
-                            ->paginate();
-                    } else
-                    if ($sort == "Le plus ancien") {
-                        $results->whereIn('id', $ids)
-                            ->where('retired_sold', '<>', 'yes')
-                            ->orderBy('created_at')
-                            ->paginate();
-                    } else
-                    if ($sort == "Prix croissant") {
-                        $results->whereIn('id', $ids)
-                            ->where('retired_sold', '<>', 'yes')
-                            ->orderBy('price_fixed')
-                            ->paginate();
-                    } else
-                    if ($sort == "Prix décroissant") {
-                        $results->whereIn('id', $ids)
-                            ->where('retired_sold', '<>', 'yes')
-                            ->orderByDesc('price_fixed')
-                            ->paginate();
-                    } else {
-                        $res = implode("','", $house);
-                        // return 'FIELD(type, ' . $res . ')';
-                        $results->whereIn('id', $ids)
-                            ->where('retired_sold', '<>', 'yes')
-                            // \DB::raw("FIELD(id, ".$input['id']." )"))
-                            ->orderByRaw("FIELD(type,  '$res')")
-                            ->paginate();
-                    }
+                $results->whereIn('id', $ids);
+                if ($user->retired_sold == "yes") {
+                    $results->where('sold', '<>', 'yes');
                 }
-
-                if ($user->retired_rent == "no") {
-                    if ($sort == "Le plus pertinent") {
-                        $results->whereIn('id', $ids)
-                            ->where('retired_rent', 'no')
-                            ->orderByDesc('visites')
-                            ->paginate();
-                    } else
-                    if ($sort == "Le plus ancien") {
-                        $results->whereIn('id', $ids)
-                            ->where('retired_rent', 'no')
-                            ->orderBy('created_at')
-                            ->paginate();
-                    } else
-                    if ($sort == "Prix croissant") {
-                        $results->whereIn('id', $ids)
-                            ->where('retired_rent', 'no')
-                            ->orderBy('price_fixed')
-                            ->paginate();
-                    } else
-                    if ($sort == "Prix décroissant") {
-                        $results->whereIn('id', $ids)
-                            ->where('retired_rent', 'no')
-                            ->orderByDesc('price_fixed')
-                            ->paginate();
-                    } else {
-                        $res = implode("','", $house);
-                        // return 'FIELD(type, ' . $res . ')';
-                        $results->whereIn('id', $ids)
-                            ->where('retired_rent', 'no')
-                            // \DB::raw("FIELD(id, ".$input['id']." )"))
-                            ->orderByRaw("FIELD(type,  '$res')")
-                            ->paginate();
-                    }
+                if ($user->retired_rent == "yes") {
+                    $results->where('rent', '<>', 'yes');
+                }
+                if ($sort == "Le plus pertinent") {
+                    $results->orderByDesc('visites');
+                } else
+                if ($sort == "Le plus ancien") {
+                    $results->orderBy('created_at');
+                } else
+                if ($sort == "Prix croissant") {
+                    $results->orderBy('price_fixed');
+                } else
+                if ($sort == "Prix décroissant") {
+                    $results->orderByDesc('price_fixed');
                 } else {
-                    if ($sort == "Le plus pertinent") {
-                        $results->whereIn('id', $ids)
-                            ->where('retired_rent', '<>', 'yes')
-                            ->orderByDesc('visites')
-                            ->paginate();
-                    } else
-                    if ($sort == "Le plus ancien") {
-                        $results->whereIn('id', $ids)
-                            ->where('retired_rent', '<>', 'yes')
-                            ->orderBy('created_at')
-                            ->paginate();
-                    } else
-                    if ($sort == "Prix croissant") {
-                        $results->whereIn('id', $ids)
-                            ->where('retired_rent', '<>', 'yes')
-                            ->orderBy('price_fixed')
-                            ->paginate();
-                    } else
-                    if ($sort == "Prix décroissant") {
-                        $results->whereIn('id', $ids)
-                            ->where('retired_rent', '<>', 'yes')
-                            ->orderByDesc('price_fixed')
-                            ->paginate();
-                    } else {
-                        $res = implode("','", $house);
-                        // return 'FIELD(type, ' . $res . ')';
-                        $results->whereIn('id', $ids)
-                            ->where('retired_rent', '<>', 'yes')
-                            // \DB::raw("FIELD(id, ".$input['id']." )"))
-                            ->orderByRaw("FIELD(type,  '$res')")
-                            ->paginate();
-                    }
+                    $res = implode("','", $house);
+                    // return 'FIELD(type, ' . $res . ')';
+                    $results->orderByRaw("FIELD(type,  '$res')");
                 }
 
                 return new PropertyCollection($results->paginate());

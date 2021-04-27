@@ -134,7 +134,7 @@ class User extends Authenticatable
 
     public function properties_saved()
     {
-        return $this->belongsToMany(Propertie::class, 'saves', 'user_id', 'property_id');
+        return $this->belongsToMany(Propertie::class, 'saves', 'user_id', 'property_id')->withPivot('sold', 'rent');
     }
 
     public function has_saved($property_id)
