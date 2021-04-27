@@ -155,7 +155,7 @@ class PropertyController extends Controller
         } catch (\Throwable $th) {
             return [
                 'message' => 'not found',
-                'data' => ['status' => '404']
+                'data' => []
             ];
         }
     }
@@ -174,7 +174,7 @@ class PropertyController extends Controller
         } catch (\Throwable $th) {
             return [
                 'message' => 'not found',
-                'data' => ['status' => '404']
+                'data' => []
             ];
         }
     }
