@@ -493,6 +493,9 @@ class PropertyController extends Controller
                 if ($sort == "Le plus ancien") {
                     $results->orderBy('created_at');
                 } else
+                if ($sort == "Le plus récent") {
+                    $results->orderByDesc('created_at');
+                } else
                 if ($sort == "Prix croissant") {
                     $results->orderBy('price_fixed');
                 } else
