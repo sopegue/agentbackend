@@ -279,12 +279,12 @@ class PropertyController extends Controller
     {
         //
         try {
-            return new PropertyCollection(Propertie::whereHas('adresses', function (Builder $query) use ($ville) {
+            return new PropertyCollection(Propertie::whereHas('adresse', function (Builder $query) use ($ville) {
                 $query->where('ville', $ville);
             })->take(20)
                 ->get());
         } catch (\Throwable $th) {
-            //throw $th;
+            return $th;
             return [
                 "message" => "an error occurs",
                 "status" => "500"
