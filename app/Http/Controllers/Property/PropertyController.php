@@ -232,6 +232,46 @@ class PropertyController extends Controller
     }
 
     /**
+     * Show the specified resource by filter.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     */
+    public function propAgApi($id)
+    {
+        //
+        try {
+            return new PropertyCollection(Propertie::where('user_id', $id)->get());
+        } catch (\Throwable $th) {
+            //throw $th;
+            return [
+                "message" => "an error occurs",
+                "status" => "500"
+            ];
+        }
+    }
+
+    /**
+     * Show the specified resource by filter.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     */
+    public function viewedApi(Request $request)
+    {
+        //
+        try {
+            return new PropertyCollection(Propertie::whereIn('id', $request->viewed)->get());
+        } catch (\Throwable $th) {
+            //throw $th;
+            return [
+                "message" => "an error occurs",
+                "status" => "500"
+            ];
+        }
+    }
+
+    /**
      * Increment property visites.
      *
      * @param  \Illuminate\Http\Request  $request
