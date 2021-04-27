@@ -237,11 +237,37 @@ class PropertyController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      */
-    public function propAgApi($id)
+    public function propAgApi($id, $exclude)
     {
         //
         try {
-            return new PropertyCollection(Propertie::where('user_id', $id)->get());
+            return new PropertyCollection(Propertie::where('user_id', $id)
+                ->where('id', '<>', $exclude)
+                ->orderByDesc('created_at')
+                ->take(10)
+                ->get());
+        } catch (\Throwable $th) {
+            //throw $th;
+            return [
+                "message" => "an error occurs",
+                "status" => "500"
+            ];
+        }
+    }
+
+    /**
+     * Show the specified resource by filter.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     */
+    public function propAgCountApi($id, $exclude)
+    {
+        //
+        try {
+            return Propertie::where('user_id', $id)
+                ->where('id', '<>', $exclude)
+                ->count();
         } catch (\Throwable $th) {
             //throw $th;
             return [
@@ -283,6 +309,7 @@ class PropertyController extends Controller
             return new PropertyCollection(Propertie::whereHas('adresse', function (Builder $query) use ($ville, $id) {
                 $query->where('ville', $ville);
             })->where('id', '<>', $id)
+                ->orderByDesc('visites')
                 ->take(20)
                 ->get());
         } catch (\Throwable $th) {
