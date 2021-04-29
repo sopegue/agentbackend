@@ -311,7 +311,7 @@ class PropertyController extends Controller
                 $query->where('ville', $ville);
             })->where('id', '<>', $id)
                 ->orderByDesc('visites')
-                ->take(20)
+                ->take(10)
                 ->get());
         } catch (\Throwable $th) {
             return $th;
