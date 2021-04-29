@@ -510,7 +510,7 @@ class PropertyController extends Controller
                 return new PropertyCollection($results->paginate());
             } else  return ["data" => []];
         } catch (\Throwable $th) {
-            return $th;
+            // return $th;
             return ["data" => []];
         }
         // return $searches;
@@ -538,6 +538,32 @@ class PropertyController extends Controller
         try {
 
             $results = Propertie::query();
+            if ($request->has('q')) {
+                if ($request->q == "super-agent") {
+                    $us_id = [];
+                    $user =  Agence::where('super', 'yes')->pluck('user_id');
+                    if ($user->isNotEmpty()) {
+                        foreach ($user as $key => $value) {
+                            # code...
+                            array_push($us_id, $value);
+                        }
+                    }
+                    if ($us_id != [])
+                        $results->whereIn('user_id', $us_id);
+                    else {
+                        return ["data" => []];
+                    }
+                }
+            }
+            if ($request->has('ofloowa')) {
+                try {
+                    $try = Propertie::where('user_id', $request->ofloowa)->firstOrFail();
+                    $results->where('user_id', $request->ofloowa);
+                } catch (\Throwable $th) {
+                    //throw $th;
+                    return ["data" => []];
+                }
+            }
             $what = $request->filter['what'];
             $sort = $request->sort;
             $search = $request->search;
@@ -981,8 +1007,12 @@ class PropertyController extends Controller
 
             return new PropertyCollection($results->paginate());
         } catch (\Throwable $th) {
-            return $th;
-            // return ['message' => 'error, can not retrieve data'];
+            // return $th;
+            return [
+                'message' => 'error, can not retrieve data',
+                'data' => [],
+                'status' => '500'
+            ];
         }
     }
 
