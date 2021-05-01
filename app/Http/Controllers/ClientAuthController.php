@@ -298,7 +298,8 @@ class ClientAuthController extends Controller
         try {
             $user = User::find($request->id);
             if ($user->email == $request->email) {
-                $user->password = Hash::make($request->password);
+                if (Hash::check($request->password, $user->password))
+                    $user->password = Hash::make($request->password);
             }
             return [
                 'message' => 'pwd updated',
