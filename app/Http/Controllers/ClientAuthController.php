@@ -200,6 +200,30 @@ class ClientAuthController extends Controller
     }
 
     /**
+     * Check the specified resource email existence from api call.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function isEmailFreeUsApi(Request $request)
+    {
+        //
+        try {
+            $agence = Agence::where('email', $request->email)
+                ->where('email', '<>', $request->current)
+                ->first();
+            $user = User::where('email', $request->email)
+                ->where('email', '<>', $request->current)
+                ->first();
+            if ($agence || $user)
+                return ['status' => 'taken'];
+            else return ['status' => 'free'];
+        } catch (\Throwable $th) {
+            return ['status' => 'free'];
+        }
+    }
+
+    /**
      * Check the specified resource role.
      *
      * @return \Illuminate\Http\Response
