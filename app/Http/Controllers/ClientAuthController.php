@@ -277,7 +277,10 @@ class ClientAuthController extends Controller
                 'status' => '201'
             ];
         } catch (\Throwable $th) {
-            return $th;
+            return [
+                'message' => 'error',
+                'status' => '500'
+            ];
         }
     }
 
@@ -293,12 +296,19 @@ class ClientAuthController extends Controller
     {
         // check role and permissions
         try {
+            $user = User::find($request->id);
+            if ($user->email == $request->email) {
+                $user->password = Hash::make($request->password);
+            }
             return [
-                'message' => 'client updated',
+                'message' => 'pwd updated',
                 'status' => '201'
             ];
         } catch (\Throwable $th) {
-            return $th;
+            return [
+                'message' => 'error',
+                'status' => '500'
+            ];
         }
     }
 
@@ -332,7 +342,10 @@ class ClientAuthController extends Controller
                 'status' => '401'
             ];
         } catch (\Throwable $th) {
-            return $th;
+            return [
+                'message' => 'error',
+                'status' => '500'
+            ];
         }
     }
 
