@@ -376,7 +376,7 @@ class ClientAuthController extends Controller
             $user = User::find($id);
             if ($user) {
                 $user->tokens()->delete();
-                $user->deleted();
+                $user->delete();
                 return [
                     'message' => 'user deleted',
                     'status' => '200'
