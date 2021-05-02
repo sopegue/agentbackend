@@ -472,6 +472,8 @@ class PropertyController extends Controller
                 foreach ($prop as $key => $value) {
                     array_push($ids, $value->id);
                 }
+            } else {
+                return ["data" => []];
             }
             if ($ids != []) {
                 if ($user->retired_sold == "yes" && $user->retired_rent == "no") {
