@@ -295,10 +295,12 @@ class ClientAuthController extends Controller
     public function updatePwdApi(Request $request)
     {
         // check role and permissions
+        // return $request;
         try {
             $user = User::find($request->id);
             if ($user->email == $request->email) {
                 $user->password = Hash::make($request->password);
+                $user->save();
             }
             return [
                 'message' => 'pwd updated',
@@ -373,12 +375,16 @@ class ClientAuthController extends Controller
         try {
             $user = User::find($id);
             if ($user) {
-                $user->deleted = 'yes';
-                $user->save();
+                $user->tokens()->delete();
+                $user->deleted();
+                return [
+                    'message' => 'user deleted',
+                    'status' => '200'
+                ];
             }
             return [
-                'message' => 'user deleted',
-                'status' => '200'
+                'message' => 'user do not exist',
+                'status' => '404'
             ];
         } catch (\Throwable $th) {
             return [
