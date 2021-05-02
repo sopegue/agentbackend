@@ -61,18 +61,18 @@ class SaveController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function savedManage($prop, $what, $id, $email)
+    public function savedManage(Request $request)
     {
         try {
             // check role and permissions
-            $user = User::find($id);
-            if ($user && Auth::user()->id == $user->id && $user->email == $email) {
-                if ($prop == "update_sold") {
-                    if ($what == "yes" || $what == "no")
-                        $user->retired_sold = $what;
-                } else if ($prop == "update_rent") {
-                    if ($what == "yes" || $what == "no")
-                        $user->retired_rent = $what;
+            $user = User::find($request->id);
+            if ($user && Auth::user()->id == $user->id && $user->email == $request->email) {
+                if ($request->prop == "update_sold") {
+                    if ($request->what == "yes" || $request->what == "no")
+                        $user->retired_sold = $request->what;
+                } else if ($request->prop == "update_rent") {
+                    if ($request->what == "yes" || $request->what == "no")
+                        $user->retired_rent = $request->what;
                 }
                 $user->save();
                 return [
