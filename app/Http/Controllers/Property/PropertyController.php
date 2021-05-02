@@ -489,6 +489,9 @@ class PropertyController extends Controller
                         ->where('rent', '<>', 'yes')
                         ->where('sold', '<>', 'yes');
                 }
+                if ($user->retired_sold == "no" && $user->retired_rent == "no") {
+                    $results->whereIn('id', $ids);
+                }
                 if ($sort == "Le plus pertinent") {
                     $results->orderByDesc('visites');
                 } else
