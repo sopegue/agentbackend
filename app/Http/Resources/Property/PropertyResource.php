@@ -36,7 +36,7 @@ class PropertyResource extends JsonResource
                 'super' => $this->user->agence->super,
                 'tel' => $this->user->agence->phone
             ],
-            'saved' => User::find(2)->has_saved(parent::toArray($request)['id']),
+            'saved' => Auth::check() ? User::find(Auth::user()->id)->has_saved(parent::toArray($request)['id']) : false,
             'images' =>  new ImageCollection($this->images),
             'links' => new LinkResource($this->link),
             'options' => new MultiOptionsCollection($this->multioptions)
