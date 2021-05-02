@@ -117,7 +117,7 @@ class SaveController extends Controller
                 ];
             }
             return [
-                'message' => 'prop already saved',
+                'message' => 'prop already saved or bad user',
                 'status' => '200'
             ];
         } catch (\Throwable $th) {
