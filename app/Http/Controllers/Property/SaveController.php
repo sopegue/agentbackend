@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Property;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SaveController extends Controller
 {
@@ -65,7 +66,7 @@ class SaveController extends Controller
         try {
             // check role and permissions
             $user = User::find($id);
-            if ($user && $user->email == $email) {
+            if ($user && Auth::user()->id == $user->id && $user->email == $email) {
                 if ($prop == "update_sold") {
                     if ($what == "yes" || $what == "no")
                         $user->retired_sold = $what;
@@ -80,8 +81,8 @@ class SaveController extends Controller
                 ];
             }
             return [
-                'message' => 'saved list not updated',
-                'status' => '500'
+                'message' => 'saved list not updated or permission denied',
+                'status' => '404'
             ];
         } catch (\Throwable $th) {
             return [
