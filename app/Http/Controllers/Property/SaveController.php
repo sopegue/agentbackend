@@ -105,7 +105,7 @@ class SaveController extends Controller
     {
         try {
             // check role and permissions
-            $save = User::where(['property_id' => $request->prop, 'user_id' => $request->user])->first();
+            $save = Save::where(['property_id' => $request->prop, 'user_id' => $request->user])->first();
             if (!$save) {
                 $newsave = new Save();
                 $newsave->property_id = $request->prop;
@@ -121,6 +121,7 @@ class SaveController extends Controller
                 'status' => '200'
             ];
         } catch (\Throwable $th) {
+            return $th;
             return [
                 'message' => 'property not saved',
                 'status' => '500',
@@ -140,7 +141,7 @@ class SaveController extends Controller
     {
         try {
             // check role and permissions
-            $save = User::where(['property_id' => $request->prop, 'user_id' => $request->user])->first();
+            $save = Save::where(['property_id' => $request->prop, 'user_id' => $request->user])->first();
             if ($save) {
                 $save->delete();
                 return [
@@ -153,8 +154,9 @@ class SaveController extends Controller
                 'status' => '200'
             ];
         } catch (\Throwable $th) {
+            return $th;
             return [
-                'message' => 'property not saved',
+                'message' => 'property not unsaved',
                 'status' => '500',
                 'error' => $th
             ];
