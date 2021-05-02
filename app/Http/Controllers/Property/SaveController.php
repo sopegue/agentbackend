@@ -66,7 +66,7 @@ class SaveController extends Controller
         try {
             // check role and permissions
             $user = User::find($request->id);
-            if ($user && Auth::user()->id == $user->id && $user->email == $request->email) {
+            if ($user && $user->email == $request->email) {
                 if ($request->prop == "update_sold") {
                     if ($request->what == "yes" || $request->what == "no")
                         $user->retired_sold = $request->what;
