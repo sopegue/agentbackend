@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Property;
 
 use App\Http\Controllers\Controller;
+use App\Models\Property\Save;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -87,6 +88,73 @@ class SaveController extends Controller
         } catch (\Throwable $th) {
             return [
                 'message' => 'property not added',
+                'status' => '500',
+                'error' => $th
+            ];
+        }
+    }
+
+    /**
+     * Update the specified resource saved list.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function saveProp(Request $request)
+    {
+        try {
+            // check role and permissions
+            $save = User::where(['property_id' => $request->prop, 'user_id' => $request->user])->first();
+            if (!$save) {
+                $newsave = new Save();
+                $newsave->property_id = $request->prop;
+                $newsave->user_id = $request->user;
+                $newsave->save();
+                return [
+                    'message' => 'prop saved',
+                    'status' => '200'
+                ];
+            }
+            return [
+                'message' => 'prop already saved',
+                'status' => '200'
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'message' => 'property not saved',
+                'status' => '500',
+                'error' => $th
+            ];
+        }
+    }
+
+    /**
+     * Update the specified resource saved list.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function unsaveProp(Request $request)
+    {
+        try {
+            // check role and permissions
+            $save = User::where(['property_id' => $request->prop, 'user_id' => $request->user])->first();
+            if ($save) {
+                $save->delete();
+                return [
+                    'message' => 'prop saved deleted',
+                    'status' => '200'
+                ];
+            }
+            return [
+                'message' => 'can not unsaved what is not saved',
+                'status' => '200'
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'message' => 'property not saved',
                 'status' => '500',
                 'error' => $th
             ];
