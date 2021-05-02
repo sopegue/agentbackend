@@ -49,7 +49,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // 'agence' => AgenceController::class,
         'save' => SaveController::class
     ]);
-    Route::get('properties/fav/{key}/{sort}', [PropertyController::class, 'favPropApi']);
+
     Route::post('saved', [SaveController::class, 'savedManage']);
     Route::post('save/property', [SaveController::class, 'saveProp']);
     Route::post('unsave/property', [SaveController::class, 'unsaveProp']);
@@ -71,6 +71,9 @@ Route::apiResources([
     'client' => ClientAuthController::class,
     'admin' => AdminAuthController::class,
 ]);
+
+Route::middleware('auth:sanctum')->get('properties/fav/{key}/{sort}', [PropertyController::class, 'favPropApi']);
+
 
 Route::get('client/logout/notoken/{user_id}/{token_id}', [ClientAuthController::class, 'logoutNoToken']);
 Route::post('client/login', [ClientAuthController::class, 'login']);
