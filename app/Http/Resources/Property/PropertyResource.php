@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class PropertyResource extends JsonResource
 {
+    use Auth;
     /**
      * Transform the resource into an array.
      *
