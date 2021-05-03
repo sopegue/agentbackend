@@ -61,7 +61,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('client/pwd/existence', [ClientAuthController::class, 'pwdExistence']);
     Route::post('client/existence/user', [ClientAuthController::class, 'isEmailFreeUsApi']);
 
-
+    Route::get('auth-property/{id}', [PropertyController::class, 'showAuth']);
 
 
     Route::get('aproperties/agfirst/{key}/{exclude}', [PropertyController::class, 'propAgCountApi']);

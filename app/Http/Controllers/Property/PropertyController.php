@@ -167,6 +167,25 @@ class PropertyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    public function showAuth($id)
+    {
+        //
+        try {
+            return new PropertyResource(Propertie::findOrFail($id));
+        } catch (\Throwable $th) {
+            return [
+                'message' => 'not found',
+                'data' => []
+            ];
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function showOwn($id)
     {
         // check if auth user before show
