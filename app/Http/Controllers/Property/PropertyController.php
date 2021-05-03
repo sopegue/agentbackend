@@ -351,7 +351,13 @@ class PropertyController extends Controller
     {
         //
         try {
-            return new PropertyCollection(Propertie::whereIn('id', $request->viewed)->get());
+            $c = collect();
+            foreach ($request->viewed as $key => $value) {
+                $view = Propertie::find($value);
+                if ($view)
+                    $c->add($view);
+            }
+            return new PropertyCollection($c);
         } catch (\Throwable $th) {
             //throw $th;
             return [
