@@ -7,6 +7,7 @@ use App\Http\Resources\User\UserResource;
 use App\Models\Adresse\Adresse;
 use App\Models\Agence\Agence;
 use App\Models\User;
+use App\Models\Verification\Verification;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -73,6 +74,46 @@ class ClientController extends Controller
     {
         //
     }
+
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function hashes($user, $email)
+    {
+        //
+        try {
+            $cur = User::find($user);
+            if ($cur && $cur->email == $email) {
+                $verif = Verification::where('user_id', $user)->first();
+                $newverif = new Verification();
+                $newverif->user_id = $user;
+                $hash = bin2hex(random_bytes(24));
+                $newverif->hash = Hash::make($hash);
+                if ($verif) {
+                    $verif->delete();
+                }
+                $newverif->save();
+                return [
+                    'status' => '200',
+                    'token' => $hash
+                ];
+            }
+            return [
+                'status' => '404',
+                'message' => 'not found'
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => '500',
+                'error' => "can't generate token"
+            ];
+        }
+    }
+
 
     /**
      * Check the specified resource email existence.
@@ -258,7 +299,7 @@ class ClientController extends Controller
                 'message' => 'user deleted',
                 'status' => '200'
             ];
-        } catch (\Throwable $th) { 
+        } catch (\Throwable $th) {
             return [
                 'message' => 'user not deleted error',
                 'status' => '500'

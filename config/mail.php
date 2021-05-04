@@ -32,7 +32,8 @@ return [
     |            "postmark", "log", "array"
     |
     */
-
+    'from' => ['address' => 'ofaloo@ofaloo.com', 'name' => 'Ofaloo'],
+    'reply_to' => ['address' => 'ofaloo@ofaloo.com', 'name' => 'Ofaloo'],
     'mailers' => [
         'smtp' => [
             'transport' => 'smtp',

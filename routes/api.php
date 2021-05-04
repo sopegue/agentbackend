@@ -9,6 +9,7 @@ use App\Http\Controllers\Property\SaveController;
 use App\Http\Controllers\User\AdminController;
 use App\Http\Controllers\User\AgentController;
 use App\Http\Controllers\User\ClientController;
+use App\Http\Controllers\VerificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -49,6 +50,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // 'agence' => AgenceController::class,
         'save' => SaveController::class
     ]);
+    Route::get('hash/{user}/{email}', [ClientController::class, 'hashes']);
+    Route::post('sendmail', [VerificationController::class, 'sendmail']);
 
     Route::post('saved', [SaveController::class, 'savedManage']);
     Route::post('save/property', [SaveController::class, 'saveProp']);
