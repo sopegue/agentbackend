@@ -32,8 +32,8 @@ return [
     |            "postmark", "log", "array"
     |
     */
-    'from' => ['address' => 'ofaloo@ofaloo.com', 'name' => 'Ofaloo'],
-    'reply_to' => ['address' => 'ofaloo@ofaloo.com', 'name' => 'Ofaloo'],
+    // 'from' => ['address' => 'ofaloo@ofaloo.com', 'name' => 'Ofaloo'],
+    // 'reply_to' => ['address' => 'ofaloo@ofaloo.com', 'name' => 'Ofaloo'],
     'mailers' => [
         'smtp' => [
             'transport' => 'smtp',
@@ -85,8 +85,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'address' => env('MAIL_FROM_ADDRESS', 'ofaloo@ofaloo.com'),
+        'name' => env('MAIL_FROM_NAME', 'Ofaloo'),
     ],
 
     /*

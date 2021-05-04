@@ -51,6 +51,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         'save' => SaveController::class
     ]);
     Route::get('hash/{user}/{email}', [ClientController::class, 'hashes']);
+    
     Route::post('sendmail', [VerificationController::class, 'sendmail']);
 
     Route::post('saved', [SaveController::class, 'savedManage']);

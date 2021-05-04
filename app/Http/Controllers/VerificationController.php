@@ -50,6 +50,7 @@ class VerificationController extends Controller
     {
         //
         try {
+            // return $request->email;
             Mail::to($request->email)->send(new EmailVerification($request->mail));
             return [
                 'status' => '200',
