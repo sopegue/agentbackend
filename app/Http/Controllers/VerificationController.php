@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Carbon;
 use App\Mail\EmailVerification;
+use App\Models\User;
+use App\Models\Verification\Verification;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
 class VerificationController extends Controller
@@ -73,6 +77,54 @@ class VerificationController extends Controller
     public function show($id)
     {
         //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function verify($email, $hash)
+    {
+        //
+        try {
+            $user = User::where('email', $email)->first();
+            if ($user) {
+                if ($user->email_verified_at == null) {
+                    $verif = Verification::where('user_id', $user->id)->first();
+                    if ($verif) {
+                        if (Hash::check($hash, $verif->hash)) {
+                            $user->email_verified_at = Carbon::now()->toDateString();
+                            $user->save();
+                            return [
+                                'status' => '200',
+                                'message' => 'verified'
+                            ];
+                        } else {
+                            return [
+                                'status' => '1997',
+                                'message' => 'expired'
+                            ];
+                        }
+                    } else {
+                        return [
+                            'status' => '401',
+                            'message' => 'forbidden'
+                        ];
+                    }
+                }
+            }
+            return [
+                'status' => '404',
+                'message' => 'not found'
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => '500',
+                'error' => "can't generate token"
+            ];
+        }
     }
 
     /**
