@@ -7,9 +7,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class EmailVerification extends Mailable
+class MessagePropriete extends Mailable
 {
     use Queueable, SerializesModels;
+
     public $details;
 
     /**
@@ -30,7 +31,7 @@ class EmailVerification extends Mailable
      */
     public function build()
     {
-        return $this->subject("Vérification de l'adresse email")
-            ->view('verification', ['details' => $this->details]);
+        return $this->subject("Message pour votre propriété")
+            ->view('message', ['details' => $this->details]);
     }
 }
