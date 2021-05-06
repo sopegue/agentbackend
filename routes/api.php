@@ -53,7 +53,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('hash/{user}/{email}', [ClientController::class, 'hashes']);
 
     Route::post('sendmail', [VerificationController::class, 'sendmail']);
-    Route::get('verification/{email}/{hash}', [VerificationController::class, 'verify']);
 
     Route::post('saved', [SaveController::class, 'savedManage']);
     Route::post('save/property', [SaveController::class, 'saveProp']);
@@ -86,6 +85,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('aproperty/{mark}/{as}/{id}', [PropertyController::class, 'soldOrRent']);
 });
 
+Route::get('verification/{email}/{hash}', [VerificationController::class, 'verify']);
 
 Route::apiResources([
     'property' => PropertyController::class,
