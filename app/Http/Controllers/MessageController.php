@@ -37,17 +37,21 @@ class MessageController extends Controller
             $message->property_id = $request->prop;
             $message->message = $request->message;
             $message->save();
-            Mail::subject("Message pour votre propriété #" . $request->prop . $message->id)
-                ->to($request->email)->send(new MessagePropriete($request->message));
+            $data = new \stdClass();
+            $data->content = $request->message;
+            $data->id = "#" . $request->prop . $message->id;
+
+            Mail::to($request->email)->send(new MessagePropriete($data));
             return [
                 'status' => '200',
                 'message' => 'message sent'
             ];
         } catch (\Throwable $th) {
-            return [
-                'status' => '500',
-                'message' => 'message not sent'
-            ];
+            return $th;
+            // return [
+            //     'status' => '500',
+            //     'message' => 'message not sent'
+            // ];
         }
     }
 

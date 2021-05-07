@@ -31,7 +31,7 @@ class MessagePropriete extends Mailable
      */
     public function build()
     {
-        return $this->subject("Message pour votre propriété")
+        return $this->subject($this->details->id . " Message pour votre propriété")
             ->view('message', ['details' => $this->details]);
     }
 }
