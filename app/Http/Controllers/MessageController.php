@@ -47,11 +47,10 @@ class MessageController extends Controller
                 'message' => 'message sent'
             ];
         } catch (\Throwable $th) {
-            return $th;
-            // return [
-            //     'status' => '500',
-            //     'message' => 'message not sent'
-            // ];
+            return [
+                'status' => '500',
+                'message' => 'message not sent'
+            ];
         }
     }
 
