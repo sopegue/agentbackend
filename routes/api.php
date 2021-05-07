@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\Agence\AgenceController;
 use App\Http\Controllers\AgentAuthController;
 use App\Http\Controllers\ClientAuthController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Property\PropertyController;
 use App\Http\Controllers\Property\SaveController;
 use App\Http\Controllers\User\AdminController;
@@ -86,6 +87,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 Route::get('verification/{email}/{hash}', [VerificationController::class, 'verify']);
+Route::post('message', [MessageController::class, 'message']);
 
 Route::apiResources([
     'property' => PropertyController::class,
