@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\MessagePropriete;
+use App\Models\Message\Contactme;
 use App\Models\Message\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -42,6 +43,38 @@ class MessageController extends Controller
             $data->id = "#" . $request->prop . $message->id;
 
             Mail::to($request->email)->send(new MessagePropriete($data));
+            return [
+                'status' => '200',
+                'message' => 'message sent'
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => '500',
+                'message' => 'message not sent'
+            ];
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function contactme(Request $request)
+    {
+        //
+        try {
+            // return $request->email;
+            $us = new Contactme();
+            if ($request->user != null) {
+                $us->user_id = $request->user;
+            }
+            $us->email = $request->email;
+            $us->message = $request->message;
+            $us->name = $request->name;
+            $us->tel = $request->tel;
+            $us->save();
             return [
                 'status' => '200',
                 'message' => 'message sent'

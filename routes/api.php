@@ -88,6 +88,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::get('verification/{email}/{hash}', [VerificationController::class, 'verify']);
 Route::post('message', [MessageController::class, 'message']);
+Route::post('contactme', [MessageController::class, 'contactme']);
 
 Route::apiResources([
     'property' => PropertyController::class,
