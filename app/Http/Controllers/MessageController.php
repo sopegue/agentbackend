@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\MessagePourAdmin;
 use App\Mail\MessagePropriete;
 use App\Models\Message\Contactme;
 use App\Models\Message\Message;
@@ -75,6 +76,10 @@ class MessageController extends Controller
             $us->name = $request->name;
             $us->tel = $request->tel;
             $us->save();
+            $data = new \stdClass();
+            $data->content = $request->html;
+            $data->id = "#" . $us->id;
+            Mail::to("yayasopeguesoro@gmail.com")->send(new MessagePourAdmin($data));
             return [
                 'status' => '200',
                 'message' => 'message sent'
