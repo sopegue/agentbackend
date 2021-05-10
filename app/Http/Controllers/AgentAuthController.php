@@ -9,6 +9,7 @@ use App\Models\Agence\Agence;
 use App\Models\User;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 
@@ -23,6 +24,41 @@ class AgentAuthController extends Controller
     public function index()
     {
         //
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function login(Request $request)
+    {
+        //
+        try {
+            $credentials = $request->only('email', 'password');
+            if (Auth::attempt($credentials, $request->rememberme)) {
+                // Authentication passed...
+
+                // check if user has agent role
+                if (Auth::user()->role == "agent") {
+                    $token = Auth::user()->createToken('ofalooagent', ['agent:permission'])->plainTextToken;
+                    return [
+                        'token' => $token,
+                        'status' => 200
+                    ];
+                }
+            }
+            return [
+                'message' => 'credentials incorrects',
+                'status' => 404
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'message' => 'An error occurs',
+                'status' => 500
+            ];
+        }
     }
 
     /**

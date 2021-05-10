@@ -42,7 +42,15 @@ Route::middleware('auth:sanctum')->get('/user/client', function (Request $reques
     ];
 });
 Route::middleware('auth:sanctum')->get('/user/agent', function (Request $request) {
-    return Auth::user();
+    if (Auth::user()->adresse_id == null)
+        return [
+            'user' => Auth::user(),
+            'adresse' => null,
+        ];
+    return [
+        'user' => Auth::user(),
+        'adresse' => Auth::user()->adresse,
+    ];
 });
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResources([
@@ -132,5 +140,6 @@ Route::get('property/visit/{id}', [PropertyController::class, 'visitApi']);
 Route::post('properties/viewed', [PropertyController::class, 'viewedApi']);
 // need auth
 // agent
+Route::post('agent/login', [AgentAuthController::class, 'login']);
 Route::post('property/update', [PropertyController::class, 'updateApi']);
 Route::get('property/{mark}/{as}/{id}', [PropertyController::class, 'soldOrRent']);
