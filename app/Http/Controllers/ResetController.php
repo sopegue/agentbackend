@@ -98,6 +98,7 @@ class ResetController extends Controller
                             } else {
                                 $user->password = Hash::make($pwd);
                                 $user->save();
+                                $verif->delete();
                                 return [
                                     'status' => '200',
                                     'message' => 'verified'
