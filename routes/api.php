@@ -94,6 +94,7 @@ Route::post('contactme', [MessageController::class, 'contactme']);
 Route::get('hash/{email}', [ResetController::class, 'hashes']);
 Route::post('sendmail/reset', [ResetController::class, 'sendmail']);
 Route::get('reset/{email}/{hash}', [ResetController::class, 'verify']);
+Route::get('reset-pwd/{email}/{hash}/{pwd}', [ResetController::class, 'reset']);
 
 Route::apiResources([
     'property' => PropertyController::class,

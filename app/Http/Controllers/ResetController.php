@@ -79,6 +79,66 @@ class ResetController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    public function reset($email, $hash, $pwd)
+    {
+        //
+        try {
+            $user = User::where('email', $email)->first();
+            if ($user) {
+                $verif = Reset::where('user_id', $user->id)->first();
+                if ($verif) {
+                    if (Hash::check($hash, $verif->hash)) {
+                        $seconds = Carbon::now()->timestamp - $verif->created_at->timestamp;
+                        if ($seconds <= 3600) {
+                            if (Hash::check($pwd, $user->password)) {
+                                return [
+                                    'status' => '302',
+                                    'message' => 'same password'
+                                ];
+                            } else {
+                                $user->password = Hash::make($pwd);
+                                $user->save();
+                                return [
+                                    'status' => '200',
+                                    'message' => 'verified'
+                                ];
+                            }
+                        }
+                        return [
+                            'status' => '1997',
+                            'message' => 'expired time',
+                        ];
+                    } else {
+                        return [
+                            'status' => '1997',
+                            'message' => 'expired hash unmatch'
+                        ];
+                    }
+                } else {
+                    return [
+                        'status' => '401',
+                        'message' => 'forbidden'
+                    ];
+                }
+            }
+            return [
+                'status' => '404',
+                'message' => 'not found'
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => '500',
+                'error' => "can't generate token"
+            ];
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function hashes($email)
     {
         //
