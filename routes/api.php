@@ -69,6 +69,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('unsave/property', [SaveController::class, 'unsaveProp']);
 
     Route::get('client/logout', [ClientAuthController::class, 'logout']);
+
+    // agent
+    Route::get('agent/logout', [AgentAuthController::class, 'logout']);
+
     Route::post('client/role', [ClientAuthController::class, 'checkClientRole']);
     Route::post('client/infos/update', [ClientAuthController::class, 'updateInfosApi']);
     Route::post('client/pwd/update', [ClientAuthController::class, 'updatePwdApi']);
