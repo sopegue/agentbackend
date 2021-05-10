@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\Reinitialisation;
 use App\Models\Reset\Reset;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -36,9 +37,16 @@ class ResetController extends Controller
                 $verif = Reset::where('user_id', $user->id)->first();
                 if ($verif) {
                     if (Hash::check($hash, $verif->hash)) {
+                        $seconds = Carbon::now()->timestamp - $verif->created_at->timestamp;
+                        if ($seconds <= 3600) {
+                            return [
+                                'status' => '200',
+                                'message' => 'verified'
+                            ];
+                        }
                         return [
-                            'status' => '200',
-                            'message' => 'verified'
+                            'status' => '1997',
+                            'message' => 'expired'
                         ];
                     } else {
                         return [

@@ -95,11 +95,18 @@ class VerificationController extends Controller
                     $verif = Verification::where('user_id', $user->id)->first();
                     if ($verif) {
                         if (Hash::check($hash, $verif->hash)) {
-                            $user->email_verified_at = Carbon::now()->timestamp;
-                            $user->save();
+                            $seconds = Carbon::now()->timestamp - $verif->created_at->timestamp;
+                            if ($seconds <= 3600) {
+                                $user->email_verified_at = Carbon::now()->timestamp;
+                                $user->save();
+                                return [
+                                    'status' => '200',
+                                    'message' => 'verified'
+                                ];
+                            }
                             return [
-                                'status' => '200',
-                                'message' => 'verified'
+                                'status' => '1997',
+                                'message' => 'expired'
                             ];
                         } else {
                             return [
