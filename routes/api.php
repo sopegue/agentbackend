@@ -45,10 +45,12 @@ Route::middleware('auth:sanctum')->get('/user/agent', function (Request $request
     if (Auth::user()->adresse_id == null)
         return [
             'user' => Auth::user(),
+            'super' => Auth::user()->agence->super == 'yes',
             'adresse' => null,
         ];
     return [
         'user' => Auth::user(),
+        'super' => Auth::user()->agence->super == 'yes',
         'adresse' => Auth::user()->adresse,
     ];
 });
