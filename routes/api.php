@@ -7,6 +7,7 @@ use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Property\PropertyController;
 use App\Http\Controllers\Property\SaveController;
+use App\Http\Controllers\ResetController;
 use App\Http\Controllers\User\AdminController;
 use App\Http\Controllers\User\AgentController;
 use App\Http\Controllers\User\ClientController;
@@ -90,6 +91,10 @@ Route::get('verification/{email}/{hash}', [VerificationController::class, 'verif
 Route::post('message', [MessageController::class, 'message']);
 Route::post('contactme', [MessageController::class, 'contactme']);
 
+Route::get('hash/{email}', [ResetController::class, 'hashes']);
+Route::post('sendmail/reset', [ResetController::class, 'sendmail']);
+Route::get('reset/{email}/{hash}', [ResetController::class, 'verify']);
+
 Route::apiResources([
     'property' => PropertyController::class,
 ]);
@@ -105,6 +110,7 @@ Route::middleware('auth:sanctum')->get('properties/fav/{key}/{sort}', [PropertyC
 Route::get('client/logout/notoken/{user_id}/{token_id}', [ClientAuthController::class, 'logoutNoToken']);
 Route::post('client/login', [ClientAuthController::class, 'login']);
 Route::post('client/existence', [ClientAuthController::class, 'isEmailFreeApi']);
+Route::get('client-only/{email}', [ClientAuthController::class, 'client']);
 
 
 Route::post('agent/existence', [AgentAuthController::class, 'isEmailFreeApi']);

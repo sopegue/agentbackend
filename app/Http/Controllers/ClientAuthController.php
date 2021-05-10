@@ -160,6 +160,32 @@ class ClientAuthController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function client($email)
+    {
+        //
+        try {
+            $user = User::where('email', $email)->first();
+            if ($user) {
+                return [
+                    'status' => '200',
+                ];
+            }
+            return [
+                'status' => '404',
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => '500',
+            ];
+        }
+    }
+
+    /**
      * Check the specified resource email existence.
      *
      * @param  string  $email
