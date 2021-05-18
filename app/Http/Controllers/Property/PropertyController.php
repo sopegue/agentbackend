@@ -131,7 +131,8 @@ class PropertyController extends Controller
 
             return [
                 'message' => 'property added',
-                'status' => '201'
+                'status' => '201',
+                'id'=>$property->id
             ];
         } catch (\Throwable $th) {
             return [
