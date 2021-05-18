@@ -1019,10 +1019,13 @@ class PropertyController extends Controller
 
             if ($idsi != [])
                 $results->whereIn('id', $idsi);
+            else if ($indoor != []) return ["data" => []];
             if ($idso != [])
                 $results->whereIn('id', $idso);
+            else if ($outdoor != []) return ["data" => []];
             if ($idse != [])
                 $results->whereIn('id', $idse);
+            else if ($energy != []) return ["data" => []];
             if ($sort == 'Le plus pertinent')
                 $results->orderByDesc('visites');
             if ($sort == 'Prix croissant')
