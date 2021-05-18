@@ -110,9 +110,10 @@ Route::post('sendmail/reset', [ResetController::class, 'sendmail']);
 Route::get('reset/{email}/{hash}', [ResetController::class, 'verify']);
 Route::get('reset-pwd/{email}/{hash}/{pwd}', [ResetController::class, 'reset']);
 
-Route::apiResources([
-    'property' => PropertyController::class,
-]);
+Route::apiResource(
+    'property',
+    PropertyController::class,
+)->except(['store']);
 Route::apiResources([
     'agent' => AgentAuthController::class,
     'client' => ClientAuthController::class,
@@ -147,5 +148,8 @@ Route::post('properties/viewed', [PropertyController::class, 'viewedApi']);
 // need auth
 // agent
 Route::post('agent/login', [AgentAuthController::class, 'login']);
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('property', [PropertyController::class, 'store']);
+});
 Route::post('property/update', [PropertyController::class, 'updateApi']);
 Route::get('property/{mark}/{as}/{id}', [PropertyController::class, 'soldOrRent']);
