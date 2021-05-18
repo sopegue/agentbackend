@@ -35,6 +35,7 @@ class ClientAuthController extends Controller
                         'status' => 200
                     ];
                 }
+                Auth::logout();
                 return [
                     'message' => 'credentials incorrects',
                     'status' => 404
