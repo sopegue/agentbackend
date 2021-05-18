@@ -28,10 +28,16 @@ class ClientAuthController extends Controller
             $credentials = $request->only('email', 'password');
             if (Auth::attempt($credentials, $request->rememberme)) {
                 // Authentication passed...
-                $token = Auth::user()->createToken('ofalooclient', ['client:permission'])->plainTextToken;
+                if (Auth::user()->role == "client") {
+                    $token = Auth::user()->createToken('ofalooclient', ['client:permission'])->plainTextToken;
+                    return [
+                        'token' => $token,
+                        'status' => 200
+                    ];
+                }
                 return [
-                    'token' => $token,
-                    'status' => 200
+                    'message' => 'credentials incorrects',
+                    'status' => 404
                 ];
             }
             return [
