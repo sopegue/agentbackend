@@ -48,6 +48,11 @@ class AgentAuthController extends Controller
                         'status' => 200
                     ];
                 }
+                Auth::logout();
+                return [
+                    'message' => 'credentials incorrects',
+                    'status' => 404
+                ];
             }
             return [
                 'message' => 'credentials incorrects',

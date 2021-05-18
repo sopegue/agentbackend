@@ -336,10 +336,14 @@ class ClientAuthController extends Controller
             if ($user->email == $request->email) {
                 $user->password = Hash::make($request->password);
                 $user->save();
+                return [
+                    'message' => 'pwd updated',
+                    'status' => '201'
+                ];
             }
             return [
-                'message' => 'pwd updated',
-                'status' => '201'
+                'message' => 'not found',
+                'status' => '404'
             ];
         } catch (\Throwable $th) {
             return [
