@@ -274,8 +274,10 @@ class ClientAuthController extends Controller
         // check role and permissions
         try {
             $user = User::find($request->id);
-            if ($request->email !== $request->current)
+            if ($request->email !== $request->current) {
                 $user->email = $request->email;
+                $user->email_verified_at = null;
+            }
             $user->name = $request->name;
             $user->surname = $request->surname;
             $user->phone = $request->phone;
