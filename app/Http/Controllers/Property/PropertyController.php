@@ -18,6 +18,7 @@ use App\Models\Property\Save;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -57,7 +58,7 @@ class PropertyController extends Controller
             $adresse->save();
 
             $property = new Propertie();
-            $property->user_id = 3; //Auth::user()->id
+            $property->user_id = Auth::user()->id;
             $property->adresse_id = $adresse->id;
             $property->type = $request->type;
             $property->taille = $request->taille;
@@ -80,7 +81,7 @@ class PropertyController extends Controller
                 $image->property_id = $property->id;
                 $image->desc = array_key_exists($key, $data) &&  $data[$key] !== "" ? $data[$key]  : null;
                 // Auth::user()->id instead of 3
-                $path = $value->store('user/3/properties', 'public');
+                $path = $value->store('user/' . Auth::user()->id . '/properties', 'azure');
                 $image->file_link = $path;
                 if ($request->principale == $key)
                     $image->principal = 'yes';
