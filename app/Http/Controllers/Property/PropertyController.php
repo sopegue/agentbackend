@@ -75,8 +75,10 @@ class PropertyController extends Controller
             $property->save();
 
             foreach ($request->file as $key => $value) {
+                $data = explode(',', $request->desc);
                 $image = new Image();
                 $image->property_id = $property->id;
+                $image->desc = array_key_exists($key, $data) &&  $data[$key] !== "" ? $data[$key]  : null;
                 // Auth::user()->id instead of 3
                 $path = $value->store('user/3/properties', 'public');
                 $image->file_link = $path;
@@ -128,13 +130,14 @@ class PropertyController extends Controller
             }
 
             Cache::forget('properties');
-
             return [
                 'message' => 'property added',
                 'status' => '201',
-                'id'=>$property->id
+                'id' => $property->id
             ];
         } catch (\Throwable $th) {
+            Propertie::destroy($property->id);
+            return $th;
             return [
                 'message' => 'property not added',
                 'status' => '500',
