@@ -1348,7 +1348,8 @@ class PropertyController extends Controller
 
             return [
                 'message' => 'property updated',
-                'status' => '201'
+                'status' => '201',
+                'id' => $property->id
             ];
         } catch (\Throwable $th) {
             return $th;
