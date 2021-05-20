@@ -1243,12 +1243,14 @@ class PropertyController extends Controller
                     if ($current) {
                         $current->desc = array_key_exists($key, $data) &&  $data[$key] !== "" ? $data[$key]  : null;
                         if ($request->principale == $key) {
-                            $pr = Image::where('principal', 'yes')->first();
-                            if ($pr) {
-                                $pr->principal = 'no';
-                                $pr->save();
+                            if ($current->principal != 'yes') {
+                                $pr = Image::where('principal', 'yes')->first();
+                                if ($pr) {
+                                    $pr->principal = 'no';
+                                    $pr->save();
+                                }
+                                $current->principal = 'yes';
                             }
-                            $current->principal = 'yes';
                         }
                         $current->save();
                     }
