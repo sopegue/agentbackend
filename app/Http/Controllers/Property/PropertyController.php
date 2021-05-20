@@ -83,6 +83,7 @@ class PropertyController extends Controller
                 // Auth::user()->id instead of 3
                 $path = $value->store('user/' . Auth::user()->id . '/properties', 'azure');
                 $image->file_link = $path;
+                $image->index = $key;
                 if ($request->principale == $key)
                     $image->principal = 'yes';
                 $image->save();
@@ -1190,45 +1191,69 @@ class PropertyController extends Controller
             $property->garage = $request->garage;
             $property->save();
 
-            $unchanged = explode(',', $request->unchanged_files);
-            if ($unchanged != [""]) {
-                $current = Image::WhereNotIn('file_link', $unchanged)
-                    ->where('property_id', $request->id)
-                    ->get();
-                if (!$current->isEmpty()) {
-                    foreach ($current as $key => $value) {
-                        Storage::disk('public')->delete($value->file_link);
-                        $value->delete();
+            $indexes = [];
+            $data = explode(',', $request->desc);
+            foreach ($data as $key => $value) {
+                array_push($indexes, $key);
+                // return 'file' . $key;
+                $filing = 'file' . $key;
+                if ($request->hasFile($filing)) {
+                    $current = Image::where('index', $key)
+                        ->where('property_id', $request->id)
+                        ->first();
+                    $id = Auth::user()->id;
+                    if ($current) {
+                        // modification
+                        Storage::disk('azure')->delete($current->file_link);
+                        $path = $request->file($filing)->store('user/' . $id . '/properties', 'azure');
+                        $current->file_link = $path;
+                        $current->desc = array_key_exists($key, $data) &&  $data[$key] !== "" ? $data[$key]  : null;
+                        if ($request->principale == $key) {
+                            $pr = Image::where('principal', 'yes')->first();
+                            if ($pr) {
+                                $pr->principal = 'no';
+                                $pr->save();
+                            }
+                            $current->principal = 'yes';
+                        }
+                        $current->save();
+                    } else {
+                        // return $request->file($filing);
+
+                        $image = new Image();
+                        $image->property_id = $property->id;
+                        $image->desc = array_key_exists($key, $data) &&  $data[$key] !== "" ? $data[$key]  : null;
+                        $path = $request->file($filing)->store('user/' . $id . '/properties', 'azure');
+                        $image->file_link = $path;
+                        $image->index = $key;
+                        if ($request->principale == $key) {
+                            $pr = Image::where('principal', 'yes')->first();
+                            if ($pr) {
+                                $pr->principal = 'no';
+                                $pr->save();
+                            }
+                            $image->principal = 'yes';
+                        }
+                        $image->save();
+                    }
+                } else {
+                    $current = Image::where('index', $key)
+                        ->where('property_id', $request->id)
+                        ->first();
+                    if ($current) {
+                        $current->desc = array_key_exists($key, $data) &&  $data[$key] !== "" ? $data[$key]  : null;
+                        if ($request->principale == $key) {
+                            $pr = Image::where('principal', 'yes')->first();
+                            if ($pr) {
+                                $pr->principal = 'no';
+                                $pr->save();
+                            }
+                            $current->principal = 'yes';
+                        }
+                        $current->save();
                     }
                 }
-            } else {
-                $current = Image::where('property_id', $request->id)->get();
-                if (!$current->isEmpty()) {
-                    foreach ($current as $key => $value) {
-                        Storage::disk('public')->delete($value->file_link);
-                        $value->delete();
-                    }
-                }
             }
-
-            if ($request->has('file')) {
-                foreach ($request->file as $key => $value) {
-                    $image = new Image();
-                    $image->property_id = $property->id;
-                    // Auth::user()->id instead of 3
-                    $path = $value->store('user/3/properties', 'public');
-                    $image->file_link = $path;
-                    $image->save();
-                }
-            }
-
-            $principal = Image::where(['property_id' => $request->id, 'principal' => 'yes'])->first();
-            if (!$principal) {
-                $current = Image::where('property_id', $request->id)->first();
-                $current->principal = 'yes';
-                $current->save();
-            }
-
             if ($request->has('yt') || $request->has('tiktok') || $request->has('insta') || $request->has('fb')) {
                 $linker = Link::where('property_id', $property->id)->first();
                 if ($linker) {
