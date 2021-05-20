@@ -92,7 +92,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('aproperties/search', [PropertyController::class, 'searchApi']);
     Route::get('aproperties/bytype/{type}', [PropertyController::class, 'showByType']);
     Route::get('aproperties/bytype/skip/{type}', [PropertyController::class, 'showByTypeSkip']);
-    Route::get('aproperty/agent/{show}', [PropertyController::class, 'showOwn']);
     Route::get('aproperty/visit/{id}', [PropertyController::class, 'visitApi']);
     Route::post('aproperties/viewed', [PropertyController::class, 'viewedApi']);
     // need auth
@@ -142,7 +141,6 @@ Route::get('properties/search/{key}', [PropertyController::class, 'searchKeyApi'
 Route::post('properties/search', [PropertyController::class, 'searchApi']);
 Route::get('properties/bytype/{type}', [PropertyController::class, 'showByType']);
 Route::get('properties/bytype/skip/{type}', [PropertyController::class, 'showByTypeSkip']);
-Route::get('property/agent/{show}', [PropertyController::class, 'showOwn']);
 Route::get('property/visit/{id}', [PropertyController::class, 'visitApi']);
 Route::post('properties/viewed', [PropertyController::class, 'viewedApi']);
 // need auth
@@ -150,6 +148,7 @@ Route::post('properties/viewed', [PropertyController::class, 'viewedApi']);
 Route::post('agent/login', [AgentAuthController::class, 'login']);
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('property', [PropertyController::class, 'store']);
+    Route::get('aproperty/agent/{show}', [PropertyController::class, 'showOwn']);
 });
 Route::post('property/update', [PropertyController::class, 'updateApi']);
 Route::get('property/{mark}/{as}/{id}', [PropertyController::class, 'soldOrRent']);
