@@ -7,6 +7,7 @@ use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Property\PropertyController;
 use App\Http\Controllers\Property\SaveController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ResetController;
 use App\Http\Controllers\User\AdminController;
 use App\Http\Controllers\User\AgentController;
@@ -145,6 +146,8 @@ Route::get('property/visit/{id}', [PropertyController::class, 'visitApi']);
 Route::post('properties/viewed', [PropertyController::class, 'viewedApi']);
 // need auth
 // agent
+Route::post('agent/login', [AgentAuthController::class, 'login']);
+Route::post('report', [ReportController::class, 'store']);
 Route::post('agent/login', [AgentAuthController::class, 'login']);
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('property', [PropertyController::class, 'store']);
