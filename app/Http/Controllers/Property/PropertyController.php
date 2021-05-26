@@ -482,7 +482,7 @@ class PropertyController extends Controller
             }
         }
         if ($ids != []) {
-            $presearches = Adresse::Has('property')->whereIn('id', $ids)
+            $presearches = Adresse::whereIn('id', $ids)
                 ->where('adresse', 'like',  $key . '%')
                 ->orWhere('adresse', 'like',  '%' . $key . '%')
                 ->orWhere('adresse', 'like',  '%' . $key)
@@ -503,7 +503,7 @@ class PropertyController extends Controller
                 array_push($results, ["adresse" => $value->adresse, "ville" => $value->ville]);
             }
         } else {
-            $searches = Adresse::has('property')
+            $searches = Adresse::whereIn('id', $ids)
                 ->selectRaw('*, INSTR(?, `adresse`) as `co`', [$key])
                 ->having('co', '>', [0])
                 ->get();
@@ -513,7 +513,7 @@ class PropertyController extends Controller
                     array_push($results, ["adresse" => $value->adresse, "ville" => $value->ville]);
                 }
             } else {
-                $searches = Adresse::has('property')
+                $searches = Adresse::whereIn('id', $ids)
                     ->selectRaw('*, INSTR(?, `ville`) as `co`', [$key])
                     ->having('co', '>', [0])
                     ->get();
@@ -523,7 +523,7 @@ class PropertyController extends Controller
                         array_push($results, ["adresse" => $value->adresse, "ville" => $value->ville]);
                     }
                 } else {
-                    $searches = Adresse::has('property')
+                    $searches = Adresse::whereIn('id', $ids)
                         ->selectRaw('*, levenshtein(?, `adresse`) as `diff`', [$key])
                         ->havingBetween('diff', [0, 4])
                         ->orderBy('diff')
@@ -537,7 +537,7 @@ class PropertyController extends Controller
                             array_push($results, ["adresse" => $value->adresse, "ville" => $value->ville]);
                         }
                     } else {
-                        $villes = Adresse::has('property')
+                        $villes = Adresse::whereIn('id', $ids)
                             ->selectRaw('*, levenshtein(?, `ville`) as `diff`', [$key])
                             ->havingBetween('diff', [0, 4])
                             ->orderBy('diff')
