@@ -394,15 +394,16 @@ class PropertyController extends Controller
     {
         //
         $results = [];
-        $presearches = Adresse::Has('property')->where('adresse', 'like',  $key . '%')
-            ->orWhere('adresse', 'like',  '%' . $key . '%')
-            ->orWhere('adresse', 'like',  '%' . $key)
-            ->orWhere('ville', 'like',  $key . '%')
-            ->orWhere('ville', 'like',  '%' . $key . '%')
-            ->orWhere('ville', 'like',  '%' . $key)
-            ->orWhereIn('adresse', [$key])
-            ->orWhereIn('ville', [$key])
-            ->orderByDesc('created_at')
+        $presearches = Adresse::whereHas('property', function (Builder $query) use ($key) {
+            $query->where('adresse', 'like',  $key . '%');
+            $query->orWhere('adresse', 'like',  '%' . $key . '%');
+            $query->orWhere('adresse', 'like',  '%' . $key);
+            $query->orWhere('ville', 'like',  $key . '%');
+            $query->orWhere('ville', 'like',  '%' . $key . '%');
+            $query->orWhere('ville', 'like',  '%' . $key);
+            $query->orWhereIn('adresse', [$key]);
+            $query->orWhereIn('ville', [$key]);
+        })->orderByDesc('created_at')
             ->take(20)
             ->get();
         if (!$presearches->isEmpty()) {
