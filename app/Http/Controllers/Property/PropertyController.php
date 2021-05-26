@@ -394,18 +394,109 @@ class PropertyController extends Controller
     {
         //
         $results = [];
-        $presearches = Adresse::whereHas('property', function (Builder $query) use ($key) {
-            $query->where('adresse', 'like',  $key . '%');
-            $query->orWhere('adresse', 'like',  '%' . $key . '%');
-            $query->orWhere('adresse', 'like',  '%' . $key);
-            $query->orWhere('ville', 'like',  $key . '%');
-            $query->orWhere('ville', 'like',  '%' . $key . '%');
-            $query->orWhere('ville', 'like',  '%' . $key);
-            $query->orWhereIn('adresse', [$key]);
-            $query->orWhereIn('ville', [$key]);
-        })->orderByDesc('created_at')
+        $presearches = Adresse::Has('property')->where('adresse', 'like',  $key . '%')
+            ->orWhere('adresse', 'like',  '%' . $key . '%')
+            ->orWhere('adresse', 'like',  '%' . $key)
+            ->orWhere('ville', 'like',  $key . '%')
+            ->orWhere('ville', 'like',  '%' . $key . '%')
+            ->orWhere('ville', 'like',  '%' . $key)
+            ->orWhereIn('adresse', [$key])
+            ->orWhereIn('ville', [$key])
+            ->orderByDesc('created_at')
             ->take(20)
             ->get();
+        if (!$presearches->isEmpty()) {
+            foreach ($presearches as $key => $value) {
+                array_push($results, ["adresse" => $value->adresse, "ville" => $value->ville]);
+            }
+        } else {
+            $searches = Adresse::has('property')
+                ->selectRaw('*, INSTR(?, `adresse`) as `co`', [$key])
+                ->having('co', '>', [0])
+                ->get();
+
+            if (!$searches->isEmpty()) {
+                foreach ($searches as $key => $value) {
+                    array_push($results, ["adresse" => $value->adresse, "ville" => $value->ville]);
+                }
+            } else {
+                $searches = Adresse::has('property')
+                    ->selectRaw('*, INSTR(?, `ville`) as `co`', [$key])
+                    ->having('co', '>', [0])
+                    ->get();
+
+                if (!$searches->isEmpty()) {
+                    foreach ($searches as $key => $value) {
+                        array_push($results, ["adresse" => $value->adresse, "ville" => $value->ville]);
+                    }
+                } else {
+                    $searches = Adresse::has('property')
+                        ->selectRaw('*, levenshtein(?, `adresse`) as `diff`', [$key])
+                        ->havingBetween('diff', [0, 4])
+                        ->orderBy('diff')
+                        ->take(20)
+                        ->get()
+                        ->reject(function ($value, $key) {
+                            return $value->adresse == null;
+                        });
+                    if (!$searches->isEmpty()) {
+                        foreach ($searches as $key => $value) {
+                            array_push($results, ["adresse" => $value->adresse, "ville" => $value->ville]);
+                        }
+                    } else {
+                        $villes = Adresse::has('property')
+                            ->selectRaw('*, levenshtein(?, `ville`) as `diff`', [$key])
+                            ->havingBetween('diff', [0, 4])
+                            ->orderBy('diff')
+                            ->take(20)
+                            ->get()
+                            ->reject(function ($value, $key) {
+                                return $value->ville == null;
+                            });
+                        if (!$villes->isEmpty()) {
+                            foreach ($villes as $key => $value) {
+                                array_push($results, ["adresse" => $value->adresse, "ville" => $value->ville]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return
+            ["adresse" => $results];
+        // return $searches;
+        // return new PropertyCollection(Propertie::take(2)->get());
+    }
+
+
+    public function searchKeyApiAgent($key, $id)
+    {
+        //
+        $results = [];
+        $ids = [];
+        $prop = Propertie::where('user_id', $id)->get();
+        if ($prop->isNotEmpty()) {
+            foreach ($prop as $key => $value) {
+                array_push($ids, $value->adresse_id);
+            }
+        }
+        if ($ids != []) {
+            $presearches = Adresse::Has('property')->whereIn('id', $ids)
+                ->where('adresse', 'like',  $key . '%')
+                ->orWhere('adresse', 'like',  '%' . $key . '%')
+                ->orWhere('adresse', 'like',  '%' . $key)
+                ->orWhere('ville', 'like',  $key . '%')
+                ->orWhere('ville', 'like',  '%' . $key . '%')
+                ->orWhere('ville', 'like',  '%' . $key)
+                ->orWhereIn('adresse', [$key])
+                ->orWhereIn('ville', [$key])
+                ->orderByDesc('created_at')
+                ->take(20)
+                ->get();
+        } else {
+            return
+                ["adresse" => $results];
+        }
         if (!$presearches->isEmpty()) {
             foreach ($presearches as $key => $value) {
                 array_push($results, ["adresse" => $value->adresse, "ville" => $value->ville]);
@@ -1053,6 +1144,10 @@ class PropertyController extends Controller
                 'status' => '500'
             ];
         }
+    }
+    public function searchApiAgent(Request $request)
+    {
+        return $request['query']['tri'];
     }
 
     /**

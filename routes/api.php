@@ -150,8 +150,10 @@ Route::post('agent/login', [AgentAuthController::class, 'login']);
 Route::post('report', [ReportController::class, 'store']);
 Route::post('agent/login', [AgentAuthController::class, 'login']);
 Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('properties/agent/search/{key}/{id}', [PropertyController::class, 'searchKeyApiAgent']);
     Route::post('property', [PropertyController::class, 'store']);
     Route::get('aproperty/agent/{show}', [PropertyController::class, 'showOwn']);
+    Route::post('agent/properties/search', [PropertyController::class, 'searchApiAgent']);
 });
 Route::post('property/update', [PropertyController::class, 'updateApi']);
 Route::get('property/{mark}/{as}/{id}', [PropertyController::class, 'soldOrRent']);
