@@ -481,9 +481,10 @@ class PropertyController extends Controller
                 array_push($ids, $value->adresse_id);
             }
         }
+        // return $ids;
         if ($ids != []) {
             $presearches = Adresse::whereIn('id', $ids)
-                ->where('adresse', 'like',  $key . '%')
+                ->orWhere('adresse', 'like',  $key . '%')
                 ->orWhere('adresse', 'like',  '%' . $key . '%')
                 ->orWhere('adresse', 'like',  '%' . $key)
                 ->orWhere('ville', 'like',  $key . '%')
