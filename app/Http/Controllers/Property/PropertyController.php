@@ -1794,38 +1794,20 @@ class PropertyController extends Controller
         // check role and permissions
         try {
             $property = Propertie::find($id);
-            foreach ($property->images as $key => $value) {
-                Storage::disk('public')->delete($value->file_link);
-                $value->delete();
+            if ($property) {
+                $property->delete();
+                return [
+                    'message' => 'property deleted',
+                    'status' => '200'
+                ];
             }
-            $link = Link::where('property_id', $id)->first();
-            if ($link)
-                $link->delete();
-
-            $multioptions = MultiOption::where('property_id', $id)->get();
-            if (!$multioptions->isEmpty()) {
-                foreach ($multioptions as $key => $value) {
-                    $value->delete();
-                }
-            }
-
-            $saved = Save::where('property_id', $id)->get();
-            if (!$saved->isEmpty()) {
-                foreach ($saved as $key => $value) {
-                    $value->delete();
-                }
-            }
-
-            $adresse = $property->adresse_id;
-            $property->delete();
-            Adresse::destroy($adresse);
             return [
-                'message' => 'property deleted',
-                'status' => '200'
+                'message' => 'not found',
+                'status' => '404'
             ];
         } catch (\Throwable $th) {
             return [
-                'message' => 'no deletion',
+                'message' => 'error',
                 'status' => '500'
             ];
         }
