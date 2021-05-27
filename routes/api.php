@@ -155,5 +155,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('aproperty/agent/{show}', [PropertyController::class, 'showOwn']);
     Route::post('agent/properties/search', [PropertyController::class, 'searchApiAgent']);
     Route::get('property/{mark}/{as}/{id}', [PropertyController::class, 'soldOrRent']);
+    Route::post('property/date', [PropertyController::class, 'date']);
     Route::post('property/update', [PropertyController::class, 'updateApi']);
 });

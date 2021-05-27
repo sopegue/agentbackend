@@ -1718,29 +1718,61 @@ class PropertyController extends Controller
         // check role and permissions
         try {
             $property = Propertie::find($id);
-            if ($mark === "sell") {
-                if ($as === "sold") {
-                    $property->sold = 'yes';
-                    $property->save();
-                } else if ($as === "unsold") {
-                    $property->sold = 'no';
-                    $property->save();
+            if ($property) {
+                if ($mark === "sell") {
+                    if ($as === "sold") {
+                        $property->sold = 'yes';
+                        $property->save();
+                    } else if ($as === "unsold") {
+                        $property->sold = 'no';
+                        $property->save();
+                    }
+                } else if ($mark === "rent") {
+                    if ($as === "rented") {
+                        $property->rent = 'yes';
+                        $property->deb_loc =  Carbon::now();
+                        $property->save();
+                    } else if ($as === "unrented") {
+                        $property->rent = 'no';
+                        $property->deb_loc =  null;
+                        $property->fin_loc =  null;
+                        $property->save();
+                    }
                 }
-            } else if ($mark === "rent") {
-                if ($as === "rented") {
-                    $property->rent = 'yes';
-                    $property->deb_loc =  Carbon::now();
-                    $property->save();
-                } else if ($as === "unrented") {
-                    $property->rent = 'no';
-                    $property->deb_loc =  null;
-                    $property->fin_loc =  null;
-                    $property->save();
-                }
+                return [
+                    'message' => $as,
+                    'status' => '200'
+                ];
             }
             return [
-                'message' => $as,
-                'status' => '200'
+                'message' => 'not found',
+                'status' => '404'
+            ];
+        } catch (\Throwable $th) {
+            return $th;
+            return [
+                'message' => 'no change',
+                'status' => '500'
+            ];
+        }
+    }
+
+    public function date(Request $request)
+    {
+        // check role and permissions
+        try {
+            $property = Propertie::find($request->id);
+            if ($property) {
+                $property->fin_loc = $request->date;
+                $property->save();
+                return [
+                    'message' => 'finc loc modifié',
+                    'status' => '200'
+                ];
+            }
+            return [
+                'message' => 'not found',
+                'status' => '404'
             ];
         } catch (\Throwable $th) {
             return $th;
