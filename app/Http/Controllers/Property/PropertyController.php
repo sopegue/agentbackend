@@ -1346,10 +1346,18 @@ class PropertyController extends Controller
 
                 if ($t_dispo != ['all']) {
                     if (in_array("Vendue(s)", $t_dispo)) {
-                        $results->where('sold', 'yes');
+                        if (in_array("Louée(s)", $t_dispo)) {
+                            $results->where('sold', 'yes')
+                                ->orWhere('rent', 'yes');
+                        } else
+                            $results->where('sold', 'yes');
                     }
                     if (in_array("Louée(s)", $t_dispo)) {
-                        $results->where('rent', 'yes');
+                        if (in_array("Vendue(s)", $t_dispo)) {
+                            $results->where('rent', 'yes')
+                                ->orWhere('sold', 'yes');
+                        } else
+                            $results->where('rent', 'yes');
                     }
                 } else {
                     $results->where('sold', 'no')
