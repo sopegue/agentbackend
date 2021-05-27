@@ -1161,19 +1161,19 @@ class PropertyController extends Controller
                 if (
                     array_key_exists("search", $request['query'])
                 ) {
-                    $search = $request['query']['search'];
+                    $search = is_array($request['query']['search']) ? $request['query']['search'][0] : $request['query']['search'];
                 } else $search = null;
                 //
                 if (
                     array_key_exists("tri", $request['query'])
                 ) {
-                    $sort = $request['query']['tri'];
+                    $sort = is_array($request['query']['tri']) ? $request['query']['tri'][0] : $request['query']['tri'];
                 } else $sort = 'plus-recent';
                 //
                 if (
                     array_key_exists("t_type", $request['query'])
                 ) {
-                    $t_type = $request['query']['t_type'];
+                    $t_type = is_array($request['query']['t_type']) ? $request['query']['t_type'] : [$request['query']['t_type']];
                     for ($i = 0; $i < count($t_type); $i++) {
                         # code...
                         $t_type[$i] = str_replace("--", " ", $t_type[$i]);
@@ -1183,13 +1183,14 @@ class PropertyController extends Controller
                 if (
                     array_key_exists("t_prop", $request['query'])
                 ) {
-                    $t_prop = $request['query']['t_prop'];
+                    $t_prop = is_array($request['query']['t_prop']) ? $request['query']['t_prop'] : [$request['query']['t_prop']];
                 } else $t_prop = ['all'];
+                // return $t_prop;
                 //
                 if (
                     array_key_exists("t_carac", $request['query'])
                 ) {
-                    $t_carac = $request['query']['t_carac'];
+                    $t_carac = is_array($request['query']['t_carac']) ? $request['query']['t_carac'] : [$request['query']['t_carac']];
                     for ($i = 0; $i < count($t_carac); $i++) {
                         # code...
                         $t_carac[$i] = str_replace("--", " ", $t_carac[$i]);
@@ -1199,7 +1200,7 @@ class PropertyController extends Controller
                 if (
                     array_key_exists("t_dispo", $request['query'])
                 ) {
-                    $t_dispo = $request['query']['t_dispo'];
+                    $t_dispo = is_array($request['query']['t_dispo']) ? $request['query']['t_dispo'] : [$request['query']['t_dispo']];
                 } else $t_dispo = ['all'];
                 //
                 if (
