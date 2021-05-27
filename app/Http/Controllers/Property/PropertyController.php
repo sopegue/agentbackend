@@ -16,7 +16,7 @@ use App\Models\Options\Option;
 use App\Models\Property\Propertie;
 use App\Models\Property\Save;
 use App\Models\User;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -1729,7 +1729,7 @@ class PropertyController extends Controller
             } else if ($mark === "rent") {
                 if ($as === "rented") {
                     $property->rent = 'yes';
-                    $property->deb_loc =  Carbon::now()->timestamp;
+                    $property->deb_loc =  Carbon::now();
                     $property->save();
                 } else if ($as === "unrented") {
                     $property->rent = 'no';
@@ -1743,6 +1743,7 @@ class PropertyController extends Controller
                 'status' => '200'
             ];
         } catch (\Throwable $th) {
+            return $th;
             return [
                 'message' => 'no change',
                 'status' => '500'
