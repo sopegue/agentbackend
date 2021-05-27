@@ -201,7 +201,9 @@ class PropertyController extends Controller
         } catch (\Throwable $th) {
             return [
                 'message' => 'not found',
-                'data' => []
+                'data' => [
+                    "status" => '404'
+                ],
             ];
         }
     }
