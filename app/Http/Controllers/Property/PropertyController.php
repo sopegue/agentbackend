@@ -1149,7 +1149,249 @@ class PropertyController extends Controller
     }
     public function searchApiAgent(Request $request)
     {
-        return $request['query']['tri'];
+
+        try {
+
+            $results = Propertie::query();
+            $idprop = [];
+            $results->where('user_id', $request->user);
+
+            if (!empty($request['query'])) {
+                // search
+                if (
+                    array_key_exists("search", $request['query'])
+                ) {
+                    $search = $request['query']['search'];
+                } else $search = null;
+                //
+                if (
+                    array_key_exists("tri", $request['query'])
+                ) {
+                    $sort = $request['query']['tri'];
+                } else $sort = 'plus-recent';
+                //
+                if (
+                    array_key_exists("t_type", $request['query'])
+                ) {
+                    $t_type = $request['query']['t_type'];
+                    for ($i = 0; $i < count($t_type); $i++) {
+                        # code...
+                        $t_type[$i] = str_replace("--", " ", $t_type[$i]);
+                    }
+                } else $t_type = ['all'];
+                //
+                if (
+                    array_key_exists("t_prop", $request['query'])
+                ) {
+                    $t_prop = $request['query']['t_prop'];
+                } else $t_prop = ['all'];
+                //
+                if (
+                    array_key_exists("t_carac", $request['query'])
+                ) {
+                    $t_carac = $request['query']['t_carac'];
+                    for ($i = 0; $i < count($t_carac); $i++) {
+                        # code...
+                        $t_carac[$i] = str_replace("--", " ", $t_carac[$i]);
+                    }
+                } else $t_carac = ['all'];
+                //
+                if (
+                    array_key_exists("t_dispo", $request['query'])
+                ) {
+                    $t_dispo = $request['query']['t_dispo'];
+                } else $t_dispo = ['all'];
+                //
+                if (
+                    array_key_exists("bed", $request['query'])
+                ) {
+                    $req = $request['query']['bed'];
+                    $bed = is_numeric($req) ? is_int($req) ? $req : (int)$req : -1;
+                } else $bed = -1;
+                // return $bed;
+
+                if (
+                    array_key_exists("p_min", $request['query'])
+                ) {
+                    $req = $request['query']['p_min'];
+                    $p_min = is_numeric($req) ? is_int($req) ? $req : (int)$req : -1;
+                } else $p_min = -1;
+
+                if (
+                    array_key_exists("p_max", $request['query'])
+                ) {
+                    $req = $request['query']['p_max'];
+                    $p_max = is_numeric($req) ? is_int($req) ? $req : (int)$req : -1;
+                } else $p_max = -1;
+
+                //
+
+                if (
+                    array_key_exists("s_min", $request['query'])
+                ) {
+                    $req = $request['query']['s_min'];
+                    $s_min = is_numeric($req) ? is_int($req) ? $req : (int)$req : -1;
+                } else $s_min = -1;
+
+                if (
+                    array_key_exists("s_max", $request['query'])
+                ) {
+                    $req = $request['query']['s_max'];
+                    $s_max = is_numeric($req) ? is_int($req) ? $req : (int)$req : -1;
+                } else $s_max = -1;
+
+                // 
+
+
+                if ($search != null) {
+                    if ($search != "") {
+                        $adresse1 = Adresse::whereHas('property', function (Builder $query) use ($search) {
+                            $query->where('adresse', 'like',  $search . '%');
+                            $query->orWhere('adresse', 'like',  '%' . $search . '%');
+                            $query->orWhere('adresse', 'like',  '%' . $search);
+                            $query->orWhere('ville', 'like',  $search . '%');
+                            $query->orWhere('ville', 'like',  '%' . $search . '%');
+                            $query->orWhere('ville', 'like',  '%' . $search);
+                            $query->orWhereIn('adresse', [$search]);
+                        })->get();
+                        if (!$adresse1->isEmpty()) {
+                            foreach ($adresse1 as $key => $value) {
+                                array_push($idprop, $value->id);
+                            }
+                        } else {
+
+                            $searches = Adresse::has('property')
+                                ->selectRaw('*, INSTR(?, `adresse`) as `co`', [$search])
+                                ->having('co', '>', [0])
+                                ->get();
+
+                            if (!$searches->isEmpty()) {
+                                foreach ($searches as $key => $value) {
+                                    array_push($idprop, $value->id);
+                                }
+                            } else {
+                                $searches = Adresse::has('property')
+                                    ->selectRaw('*, INSTR(?, `ville`) as `co`', [$search])
+                                    ->having('co', '>', [0])
+                                    ->get();
+
+                                if (!$searches->isEmpty()) {
+                                    foreach ($searches as $key => $value) {
+                                        array_push($idprop, $value->id);
+                                    }
+                                } else {
+                                    $searches = Adresse::has('property')
+                                        ->selectRaw('*, levenshtein(?, `adresse`) as `diff`', [$search])
+                                        ->havingBetween('diff', [0, 4])
+                                        ->get()
+                                        ->reject(function ($value, $key) {
+                                            return $value->adresse == null;
+                                        });
+                                    if (!$searches->isEmpty()) {
+                                        foreach ($searches as $key => $value) {
+                                            array_push($idprop, $value->id);
+                                        }
+                                    } else {
+                                        $villes = Adresse::has('property')
+                                            ->selectRaw('*, levenshtein(?, `ville`) as `diff`', [$search])
+                                            ->havingBetween('diff', [0, 4])
+                                            ->get()
+                                            ->reject(function ($value, $key) {
+                                                return $value->ville == null;
+                                            });
+                                        if (!$villes->isEmpty()) {
+                                            foreach ($villes as $key => $value) {
+                                                array_push($idprop, $value->id);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if ($idprop != [])
+                            $results->whereIn('adresse_id', $idprop);
+                        else {
+                            return ["data" => []];
+                        }
+                        if ($results->count() == 0)
+                            return ["data" => []];
+                    }
+                }
+                if ($t_type != ['all']) {
+                    $results->whereIn('proposition', $t_type);
+                }
+                if ($t_prop != ['all']) {
+                    $results->whereIn('type', $t_prop);
+                }
+                $mop = [];
+                $op = [];
+                if ($t_carac != ['all']) {
+
+                    $options = Option::whereIn('title', $t_carac)->get();
+                    foreach ($options as $key => $value) {
+                        array_push($op, $value->id);
+                    }
+                    $multioptions = Multioption::whereIn('option_id', $op)->get();
+
+                    if (!$multioptions->isEmpty()) {
+                        foreach ($multioptions as $key => $value) {
+                            array_push($mop, $value->property_id);
+                        }
+                    }
+                }
+                if ($mop != [])
+                    $results->whereIn('id', $mop);
+                else if ($t_carac != ['all']) return ["data" => []];
+
+                if ($t_dispo != ['all']) {
+                    if (in_array("Vendue(s)", $t_dispo)) {
+                        $results->where('sold', 'no');
+                    }
+                    if (in_array("Louée(s)", $t_dispo)) {
+                        $results->where('rent', 'no');
+                    }
+                } else {
+                    $results->where('sold', 'no')
+                        ->where('rent', 'no');
+                }
+                //
+                if ($p_min > -1 && $p_max > -1) {
+                    $results
+                        ->whereBetween('price_fixed', [$p_min, $p_max]);
+                } else if ($p_min == -1 && $p_max != -1) {
+                    $results
+                        ->where('price_fixed', '<=', $p_max);
+                } else if ($p_max == -1 && $p_min != -1) {
+                    $results
+                        ->where('price_fixed', '>=', $p_min);
+                }
+
+                if ($s_min > -1 && $s_max > -1) {
+                    $results
+                        ->whereBetween('taille', [$s_min, $s_max]);
+                } else if ($s_min == -1 && $s_max != -1) {
+                    $results
+                        ->where('taille', '<=', $s_max);
+                } else if ($s_max == -1 && $s_min != -1) {
+                    $results
+                        ->where('taille', '>=', $s_min);
+                }
+                $results->where('bed', '>=', $bed);
+                if ($sort == 'prix-croissant')
+                    $results->orderBy('price_fixed');
+                if ($sort == 'prix-decroissant')
+                    $results->orderByDesc('price_fixed');
+                if ($sort == 'plus-recent')
+                    $results->orderByDesc('created_at');
+                if ($sort == 'plus-ancien')
+                    $results->orderBy('created_at');
+            } else {
+                $results->orderByDesc('created_at');
+            }
+            return new PropertyCollection($results->paginate());
+        } catch (\Throwable $th) {
+            return $th;
+        }
     }
 
     /**
