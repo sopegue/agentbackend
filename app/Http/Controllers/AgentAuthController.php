@@ -39,23 +39,18 @@ class AgentAuthController extends Controller
             $credentials['main_email'] = $request->email;
             $credentials['password'] = $request->password;
             // return $credentials;
-            if ($request->email == 'alinux@ofaloo.com') {
-                if (Auth::attempt($credentials, $request->rememberme)) {
-                    // Authentication passed...
+            if (Auth::attempt($credentials, $request->rememberme)) {
+                // Authentication passed...
 
-                    // check if user has agent role
-                    if (Auth::user()->role == "agent") {
-                        $token = Auth::user()->createToken('ofalooagent', ['agent:permission'])->plainTextToken;
-                        return [
-                            'token' => $token,
-                            'status' => 200
-                        ];
-                    }
-                    Auth::logout();
+                // check if user has agent role
+                if (Auth::user()->role == "agent" && Auth::user()->status == "active") {
+                    $token = Auth::user()->createToken('ofalooagent', ['agent:permission'])->plainTextToken;
                     return [
-                        'message' => 'credentials incorrects',
-                        'status' => 404
+                        'token' => $token,
+                        'status' => 200
                     ];
+                } else {
+                    Auth::logout();
                 }
             }
             return [
