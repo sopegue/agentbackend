@@ -1534,6 +1534,7 @@ class PropertyController extends Controller
             $property->type = $request->type;
             $property->taille = $request->taille;
             $property->price_fixed = $request->prix_fix;
+            $property->phone = $request->phone;
             $property->price_min = $request->prix_min;
             $property->price_max = $request->prix_max;
             $property->negociable = $request->negociable;
