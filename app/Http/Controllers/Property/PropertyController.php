@@ -62,6 +62,7 @@ class PropertyController extends Controller
             $property->user_id = Auth::user()->id;
             $property->adresse_id = $adresse->id;
             $property->type = $request->type;
+            $property->phone = $request->phone;
             $property->taille = $request->taille;
             $property->price_fixed = $request->prix_fix;
             $property->price_min = $request->prix_min;
@@ -1431,6 +1432,7 @@ class PropertyController extends Controller
             $property->adresse_id = $adresse->id;
             $property->type = $request->type;
             $property->taille = $request->taille;
+            $property->phone = $request->phone;
             $property->price_fixed = $request->prix_fix;
             $property->price_min = $request->prix_min;
             $property->price_max = $request->prix_max;
