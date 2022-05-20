@@ -1,4 +1,6 @@
-## Ofaloo backend app for both ofaloo main front and admin dashboard
+## Ofaloo 
+
+Backend app for both ofaloo main front and admin dashboard
 
 # demo site
 
