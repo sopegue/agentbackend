@@ -89,6 +89,8 @@ class PropertyController extends Controller
                 $image->save();
             }
 
+            // return "this";
+
             if ($request->has('yt') || $request->has('tiktok') || $request->has('insta') || $request->has('fb')) {
                 $link = new Link();
                 $link->property_id = $property->id;
