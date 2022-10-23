@@ -60,7 +60,8 @@ class AgentAuthController extends Controller
         } catch (\Throwable $th) {
             return [
                 'message' => 'An error occurs',
-                'status' => 500
+                'status' => 500,
+                'th' => $th
             ];
         }
     }
