@@ -37,9 +37,7 @@ class PropertyController extends Controller
         //
         // return new PropertyCollection(Propertie::all());
         // Cache::forget('properties');
-        return Cache::rememberForever('properties', function () {
-            return new PropertyCollection(Propertie::all());
-        });
+        return new PropertyCollection(Propertie::all());
     }
 
     /**
@@ -133,7 +131,7 @@ class PropertyController extends Controller
                 }
             }
 
-            Cache::forget('properties');
+            // Cache::forget('properties');
             return [
                 'message' => 'property added',
                 'status' => '201',
@@ -141,6 +139,7 @@ class PropertyController extends Controller
             ];
         } catch (\Throwable $th) {
             Propertie::destroy($property->id);
+            Adresse::destroy($adresse->id);
             return $th;
             return [
                 'message' => 'property not added',
